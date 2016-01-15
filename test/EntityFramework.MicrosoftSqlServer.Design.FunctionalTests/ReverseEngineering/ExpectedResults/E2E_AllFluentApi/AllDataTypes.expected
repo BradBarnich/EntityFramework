@@ -27,14 +27,23 @@ namespace E2ETest.Namespace
         public TimeSpan? timeColumn { get; set; }
         public TimeSpan? time4Column { get; set; }
         public string charColumn { get; set; }
+        public string char10Column { get; set; }
         public string textColumn { get; set; }
         public string varcharColumn { get; set; }
+        public string varchar66Column { get; set; }
+        public string varcharMaxColumn { get; set; }
         public string ncharColumn { get; set; }
+        public string nchar99Column { get; set; }
         public string ntextColumn { get; set; }
         public string nvarcharColumn { get; set; }
+        public string nvarchar100Column { get; set; }
+        public string nvarcharMaxColumn { get; set; }
         public byte[] binaryColumn { get; set; }
+        public byte[] binary111Column { get; set; }
         public byte[] imageColumn { get; set; }
         public byte[] varbinaryColumn { get; set; }
+        public byte[] varbinary123Column { get; set; }
+        public byte[] varbinaryMaxColumn { get; set; }
         public byte[] timestampColumn { get; set; }
         public Guid? uniqueidentifierColumn { get; set; }
         public string typeAliasColumn { get; set; }

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.Data.Entity.Internal;
@@ -17,6 +18,11 @@ namespace Microsoft.Data.Entity.Scaffolding
     public class SqlServerScaffoldingModelFactory : RelationalScaffoldingModelFactory
     {
         private const int DefaultTimeTimePrecision = 7;
+
+        private static readonly ISet<string> _dataTypesForbiddingLength =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "image", "ntext", "text" };
+        private static readonly ISet<string> _dataTypesAllowingMaxLength =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "varchar", "nvarchar", "varbinary" };
 
         public SqlServerScaffoldingModelFactory(
             [NotNull] ILoggerFactory loggerFactory,
@@ -49,7 +55,7 @@ namespace Microsoft.Data.Entity.Scaffolding
             return propertyBuilder;
         }
 
-        protected override Type GetTypeMapping([NotNull] ColumnModel column)
+        protected override RelationalTypeMapping GetTypeMapping([NotNull] ColumnModel column)
         {
             RelationalTypeMapping mapping = null;
             if (column.DataType != null)
@@ -64,12 +70,7 @@ namespace Microsoft.Data.Entity.Scaffolding
                 mapping = TypeMapper.FindMapping(underlyingDataType ?? column.DataType);
             }
 
-            if (mapping?.ClrType == null)
-            {
-                return null;
-            }
-
-            return column.IsNullable ? mapping.ClrType.MakeNullable() : mapping.ClrType;
+            return mapping;
         }
 
         protected override KeyBuilder VisitPrimaryKey([NotNull] EntityTypeBuilder builder, [NotNull] TableModel table)
@@ -144,14 +145,62 @@ namespace Microsoft.Data.Entity.Scaffolding
                 propertyBuilder.HasColumnType($"{column.DataType}({column.SqlServer().DateTimePrecision.Value})");
             }
 
-            // undo quirk in reverse type mapping to litters code with unnecessary nvarchar annotations
-            if (typeof(string) == propertyBuilder.Metadata.ClrType
-                && propertyBuilder.Metadata.Relational().ColumnType == "nvarchar")
+            if (!IsTypeAlias(column)
+                && !_dataTypesForbiddingLength.Contains(propertyBuilder.Metadata.Relational().ColumnType))
             {
-                propertyBuilder.Metadata.Relational().ColumnType = null;
+                var typeMapping = GetTypeMapping(column);
+                if (typeof(string) == typeMapping.ClrType
+                    || typeof(byte[]) == typeMapping.ClrType)
+                {
+                    if (typeMapping.DefaultTypeName == "nvarchar"
+                        || typeMapping.DefaultTypeName == "varbinary")
+                    {
+                        // nvarchar is the default column type for string properties,
+                        // so we don't need to define it using HasColumnType() and removing
+                        // the column type allows the HasMaxLength() API to have effect.
+                        propertyBuilder.Metadata.Relational().ColumnType = null;
+                    }
+                    else
+                    {
+                        // Override the column type to have the length in it.
+                        if (_dataTypesAllowingMaxLength.Contains(typeMapping.DefaultTypeName))
+                        {
+                            propertyBuilder.Metadata.Relational().ColumnType =
+                                column.DataType
+                                + "("
+                                + (column.MaxLength.HasValue ? column.MaxLength.Value.ToString() : "max")
+                                + ")";
+                        }
+                        else
+                        {
+                            if (column.MaxLength.HasValue)
+                            {
+                                propertyBuilder.Metadata.Relational().ColumnType =
+                                    column.DataType
+                                    + "(" + column.MaxLength.Value + ")";
+                            }
+                        }
+
+                        // Remove the MaxLength annotation so that it does not appear as
+                        // fluent API or as an attribute (it would have no effect given
+                        // what we did above).
+                        propertyBuilder.Metadata.SetMaxLength(null);
+                    }
+                }
             }
 
             return propertyBuilder;
+        }
+
+        private bool IsTypeAlias(ColumnModel column)
+        {
+            var typeAliases = column.Table.Database.SqlServer().TypeAliases;
+            if (typeAliases != null)
+            {
+                return typeAliases.ContainsKey(column.DataType);
+            }
+
+            return false;
         }
 
         private PropertyBuilder VisitDefaultValue(ColumnModel column, PropertyBuilder propertyBuilder)
