@@ -106,6 +106,10 @@ namespace Microsoft.Data.Entity.ChangeTracking.Internal
             var existingEntry = TryGetEntry(entity);
             if (existingEntry != null)
             {
+                if (existingEntry.EntityState == EntityState.Added)
+                {
+                    existingEntry.SetEntityState(EntityState.Unchanged);
+                }
                 return existingEntry;
             }
 
