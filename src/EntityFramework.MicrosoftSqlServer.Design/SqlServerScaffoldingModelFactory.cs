@@ -11,6 +11,7 @@ using Microsoft.Data.Entity.Metadata.Builders;
 using Microsoft.Data.Entity.Metadata.Internal;
 using Microsoft.Data.Entity.Scaffolding.Metadata;
 using Microsoft.Data.Entity.Storage;
+using Microsoft.Data.Entity.Storage.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Data.Entity.Scaffolding
@@ -31,6 +32,8 @@ namespace Microsoft.Data.Entity.Scaffolding
             : base(loggerFactory, typeMapper, databaseModelFactory)
         {
         }
+
+        public SqlServerTypeMapper SqlServerTypeMapper => TypeMapper as SqlServerTypeMapper;
 
         public override IModel Create(string connectionString, TableSelectionSet tableSelectionSet)
         {
@@ -144,64 +147,19 @@ namespace Microsoft.Data.Entity.Scaffolding
                 propertyBuilder.Metadata.SetMaxLength(null);
                 propertyBuilder.HasColumnType($"{column.DataType}({column.SqlServer().DateTimePrecision.Value})");
             }
-
-            if (!IsTypeAlias(column)
-                && !_dataTypesForbiddingLength.Contains(propertyBuilder.Metadata.Relational().ColumnType))
+            else if (!HasTypeAlias(column))
             {
-                var typeMapping = GetTypeMapping(column);
-                if (typeof(string) == typeMapping.ClrType
-                    || typeof(byte[]) == typeMapping.ClrType)
-                {
-                    if (typeMapping.DefaultTypeName == "nvarchar"
-                        || typeMapping.DefaultTypeName == "varbinary")
-                    {
-                        // nvarchar is the default column type for string properties,
-                        // so we don't need to define it using HasColumnType() and removing
-                        // the column type allows the HasMaxLength() API to have effect.
-                        propertyBuilder.Metadata.Relational().ColumnType = null;
-                    }
-                    else
-                    {
-                        // Override the column type to have the length in it.
-                        if (_dataTypesAllowingMaxLength.Contains(typeMapping.DefaultTypeName))
-                        {
-                            propertyBuilder.Metadata.Relational().ColumnType =
-                                column.DataType
-                                + "("
-                                + (column.MaxLength.HasValue ? column.MaxLength.Value.ToString() : "max")
-                                + ")";
-                        }
-                        else
-                        {
-                            if (column.MaxLength.HasValue)
-                            {
-                                propertyBuilder.Metadata.Relational().ColumnType =
-                                    column.DataType
-                                    + "(" + column.MaxLength.Value + ")";
-                            }
-                        }
-
-                        // Remove the MaxLength annotation so that it does not appear as
-                        // fluent API or as an attribute (it would have no effect given
-                        // what we did above).
-                        propertyBuilder.Metadata.SetMaxLength(null);
-                    }
-                }
+                var qualifiedColumnTypeAndMaxLength =
+                    SqlServerTypeMapper.MaxLengthQualifiedDataType(column.DataType, column.MaxLength);
+                propertyBuilder.HasColumnType(qualifiedColumnTypeAndMaxLength.Item1);
+                propertyBuilder.Metadata.SetMaxLength(qualifiedColumnTypeAndMaxLength.Item2);
             }
 
             return propertyBuilder;
         }
 
-        private bool IsTypeAlias(ColumnModel column)
-        {
-            var typeAliases = column.Table.Database.SqlServer().TypeAliases;
-            if (typeAliases != null)
-            {
-                return typeAliases.ContainsKey(column.DataType);
-            }
-
-            return false;
-        }
+        private bool HasTypeAlias(ColumnModel column)
+            => column.Table.Database.SqlServer().TypeAliases?.ContainsKey(column.DataType) == true;
 
         private PropertyBuilder VisitDefaultValue(ColumnModel column, PropertyBuilder propertyBuilder)
         {

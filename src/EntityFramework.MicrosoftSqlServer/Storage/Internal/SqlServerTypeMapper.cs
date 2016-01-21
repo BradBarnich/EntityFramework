@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using JetBrains.Annotations;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Utilities;
 
@@ -36,6 +37,11 @@ namespace Microsoft.Data.Entity.Storage.Internal
         private readonly RelationalTypeMapping _uniqueidentifier = new RelationalTypeMapping("uniqueidentifier", typeof(Guid));
         private readonly RelationalTypeMapping _decimal = new RelationalTypeMapping("decimal(18, 2)", typeof(decimal));
         private readonly RelationalTypeMapping _time = new RelationalTypeMapping("time", typeof(TimeSpan));
+
+        private static readonly ISet<string> _dataTypesForbiddingMaxLength =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "image", "ntext", "text" };
+        private static readonly ISet<string> _dataTypesAllowingMaxLengthMax =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "varchar", "nvarchar", "varbinary" };
 
         private readonly Dictionary<string, RelationalTypeMapping> _simpleNameMappings;
         private readonly Dictionary<Type, RelationalTypeMapping> _simpleMappings;
@@ -117,6 +123,66 @@ namespace Microsoft.Data.Entity.Storage.Internal
 
         protected override IReadOnlyDictionary<string, RelationalTypeMapping> GetSimpleNameMappings()
             => _simpleNameMappings;
+
+        /// <summary>
+        /// Turns an unqualified SQL Server type name and its max length into a
+        /// a qualified SQL Server type name and its max length for use on properties.
+        /// </summary>
+        /// <param name="unqualifiedTypeName">
+        ///   the unqualified SQL Server data type name, e.g. nvarchar, of a column
+        /// </param>
+        /// <param name="maxLength">
+        ///   the max length of the same column as defined by SQL Server metadata
+        /// </param>
+        /// <returns>
+        ///   a tuple of the max-length-qualified SQL Server type name, e.g. nvarchar(max),
+        ///   which can be used by HasColumnType() and the max length that should be
+        ///   defined on that same property through HasMaxLength()
+        /// </returns>
+        public virtual Tuple<string, int?> MaxLengthQualifiedDataType(
+            [NotNull] string unqualifiedTypeName, int? maxLength)
+        {
+            Check.NotEmpty(unqualifiedTypeName, nameof(unqualifiedTypeName));
+
+            var typeMapping = FindMapping(unqualifiedTypeName);
+            if ((typeof(string) == typeMapping.ClrType
+                || typeof(byte[]) == typeMapping.ClrType)
+                && !_dataTypesForbiddingMaxLength.Contains(unqualifiedTypeName))
+            {
+                if (typeMapping.DefaultTypeName == "nvarchar"
+                    || typeMapping.DefaultTypeName == "varbinary")
+                {
+                    // nvarchar is the default column type for string properties,
+                    // so we don't need to define it using HasColumnType() and removing
+                    // the column type allows the HasMaxLength() API to have effect.
+                    // Similarly for varbinary and byte[] properties.
+                    return new Tuple<string, int?>(null, maxLength);
+                }
+                else
+                {
+                    if (_dataTypesAllowingMaxLengthMax.Contains(typeMapping.DefaultTypeName))
+                    {
+                        return new Tuple<string, int?>(
+                            unqualifiedTypeName
+                                + "("
+                                + (maxLength == null ? "max" : maxLength.ToString())
+                                + ")",
+                            null);
+                    }
+                    else
+                    {
+                        if (maxLength != null)
+                        {
+                            return new Tuple<string, int?>(
+                                unqualifiedTypeName + "(" + maxLength.ToString() + ")",
+                                null);
+                        }
+                    }
+                }
+            }
+
+            return new Tuple<string, int?> (unqualifiedTypeName, maxLength);
+        }
 
         public override RelationalTypeMapping FindMapping(Type clrType)
         {
