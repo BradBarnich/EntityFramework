@@ -1016,7 +1016,7 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             key.UpdateConfigurationSource(configurationSource);
             principalType.UpdateConfigurationSource(configurationSource);
 
-            HasIndex(dependentProperties, ConfigurationSource.Convention);
+            //HasIndex(dependentProperties, ConfigurationSource.Convention);
 
             var value = key.Builder;
             if (runConventions)
