@@ -38,30 +38,14 @@
     },
     "dnx451": {
       "dependencies": {
-        "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-*",
-        "Microsoft.Dnx.Runtime": "1.0.0-*",
+        "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc2-16161",
+        "Microsoft.Dnx.Runtime": "1.0.0-rc2-16357",
         "Microsoft.Extensions.CommandLineUtils": "1.0.0-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*"
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc2-16530"
       },
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0",
         "System.Xml.Linq": "4.0.0.0"
-      }
-    },
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-*",
-        "Microsoft.Dnx.Runtime": "1.0.0-*",
-        "Microsoft.Extensions.CommandLineUtils": "1.0.0-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-        "System.Console": "4.0.0-*",
-        "System.IO.FileSystem": "4.0.1-*",
-        "System.Xml.XDocument": "4.0.11-*"
-      }
-    },
-    "netcore50": {
-      "bin": {
-        "assembly": "lib\\netcore50\\_._"
       }
     }
   },
