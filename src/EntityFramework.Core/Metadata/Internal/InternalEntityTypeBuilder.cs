@@ -85,12 +85,12 @@ namespace Microsoft.Data.Entity.Metadata.Internal
         }
 
         public virtual InternalKeyBuilder HasKey([NotNull] IReadOnlyList<string> propertyNames, ConfigurationSource configurationSource)
-            => HasKey(GetOrCreateProperties(propertyNames, configurationSource), configurationSource);
+            => HasKey(GetOrCreateProperties(propertyNames, configurationSource), configurationSource, setRequired: false);
 
         public virtual InternalKeyBuilder HasKey([NotNull] IReadOnlyList<PropertyInfo> clrProperties, ConfigurationSource configurationSource)
-            => HasKey(GetOrCreateProperties(clrProperties, configurationSource), configurationSource);
+            => HasKey(GetOrCreateProperties(clrProperties, configurationSource), configurationSource, setRequired: false);
 
-        private InternalKeyBuilder HasKey(IReadOnlyList<Property> properties, ConfigurationSource configurationSource)
+        private InternalKeyBuilder HasKey(IReadOnlyList<Property> properties, ConfigurationSource configurationSource, bool setRequired = true)
         {
             if (properties == null)
             {
@@ -108,9 +108,12 @@ namespace Microsoft.Data.Entity.Metadata.Internal
                     return null;
                 }
 
-                foreach (var actualProperty in actualProperties)
+                if(setRequired)
                 {
-                    actualProperty.Builder.IsRequired(true, configurationSource);
+                    foreach (var actualProperty in actualProperties)
+                    {
+                        actualProperty.Builder.IsRequired(true, configurationSource);
+                    }
                 }
 
                 key = Metadata.AddKey(actualProperties, configurationSource);

@@ -407,10 +407,10 @@ namespace Microsoft.Data.Entity.Metadata.Internal
                     throw new InvalidOperationException(CoreStrings.KeyPropertyInForeignKey(property.Name, this.DisplayName()));
                 }
 
-                if (property.IsNullable)
-                {
-                    throw new InvalidOperationException(CoreStrings.NullableKey(this.DisplayName(), property.Name));
-                }
+                //if (property.IsNullable)
+                //{
+                //    throw new InvalidOperationException(CoreStrings.NullableKey(this.DisplayName(), property.Name));
+                //}
             }
 
             var key = FindKey(properties);
