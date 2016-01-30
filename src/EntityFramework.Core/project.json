@@ -15,8 +15,8 @@
     "Microsoft.Extensions.Caching.Memory": "1.0.0-*",
     "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-*",
-    "Microsoft.Extensions.Logging": "1.0.0-*",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-*",
+    "Microsoft.Extensions.Logging": "1.0.0-rc2-15958",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15958",
     "Microsoft.Extensions.Options": "1.0.0-*",
     "Remotion.Linq": "2.0.1"
   },
