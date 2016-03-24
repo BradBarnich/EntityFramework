@@ -21,6 +21,7 @@
   "frameworks": {
     "net451": {
       "frameworkAssemblies": {
+        "System.ComponentModel": "4.0.0.0",
         "System.ComponentModel.DataAnnotations": "",
         "System.Runtime": { "type": "build" }
       }
