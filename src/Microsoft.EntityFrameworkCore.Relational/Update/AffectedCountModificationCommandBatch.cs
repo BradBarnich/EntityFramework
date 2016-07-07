@@ -57,21 +57,21 @@ namespace Microsoft.EntityFrameworkCore.Update
                        && reader.NextResult());
 
 #if DEBUG
-                while (commandIndex < CommandResultSet.Count
-                       && CommandResultSet[commandIndex] == ResultSetMapping.NoResultSet)
-                {
-                    commandIndex++;
-                }
+				while ( commandIndex < CommandResultSet.Count
+					   && CommandResultSet[ commandIndex ] == ResultSetMapping.NoResultSet )
+				{
+					commandIndex++;
+				}
 
-                Debug.Assert(commandIndex == ModificationCommands.Count,
-                    "Expected " + ModificationCommands.Count + " results, got " + commandIndex);
+				Debug.Assert( commandIndex == ModificationCommands.Count,
+					"Expected " + ModificationCommands.Count + " results, got " + commandIndex );
 
-                var expectedResultSetCount = CommandResultSet.Count(e => e == ResultSetMapping.LastInResultSet);
+				var expectedResultSetCount = CommandResultSet.Count( e => e == ResultSetMapping.LastInResultSet );
 
-                Debug.Assert(actualResultSetCount == expectedResultSetCount,
-                    "Expected " + expectedResultSetCount + " result sets, got " + actualResultSetCount);
+				Debug.Assert( actualResultSetCount == expectedResultSetCount,
+					"Expected " + expectedResultSetCount + " result sets, got " + actualResultSetCount );
 #endif
-            }
+			}
             catch (DbUpdateException)
             {
                 throw;
@@ -146,24 +146,47 @@ namespace Microsoft.EntityFrameworkCore.Update
         protected virtual int ConsumeResultSetWithPropagation(int commandIndex, [NotNull] DbDataReader reader)
         {
             var rowsAffected = 0;
+			int? positionIndex = null;
+			var initialCommandIndex = commandIndex;
             do
             {
-                var tableModification = ModificationCommands[commandIndex];
-                Debug.Assert(tableModification.RequiresResultPropagation);
+				if ( !reader.Read() )
+				{
+					var expectedRowsAffected = rowsAffected + 1;
+					while ( ( ++commandIndex < CommandResultSet.Count )
+						   && CommandResultSet[ commandIndex - 1 ] == ResultSetMapping.NotLastInResultSet )
+					{
+						expectedRowsAffected++;
+					}
+					return commandIndex;
+					//ThrowAggregateUpdateConcurrencyException( commandIndex, expectedRowsAffected, rowsAffected );
+				}
 
-                if (!reader.Read())
-                {
-                    var expectedRowsAffected = rowsAffected + 1;
-                    while ((++commandIndex < CommandResultSet.Count)
-                           && CommandResultSet[commandIndex - 1] == ResultSetMapping.NotLastInResultSet)
-                    {
-                        expectedRowsAffected++;
-                    }
+				ModificationCommand tableModification;
+				if(!positionIndex.HasValue)
+				{
+					for(var i = 0; i < reader.FieldCount; i++ )
+					{
+						if(reader.GetName(i).Equals("_Position"))
+						{
+							positionIndex = i;
+							break;
+						}
+					}
+					if(!positionIndex.HasValue) positionIndex = -1;
+				}
+				if ( positionIndex >= 0)
+				{
+					tableModification = ModificationCommands[ initialCommandIndex + reader.GetInt32(positionIndex.Value) ];
+					Debug.Assert( tableModification.RequiresResultPropagation );
+				}
+				else
+				{
+					tableModification = ModificationCommands[ commandIndex ];
+					Debug.Assert( tableModification.RequiresResultPropagation );
+				}
 
-                    ThrowAggregateUpdateConcurrencyException(commandIndex, expectedRowsAffected, rowsAffected);
-                }
-
-                var valueBufferFactory = CreateValueBufferFactory(tableModification.ColumnModifications);
+				var valueBufferFactory = CreateValueBufferFactory(tableModification.ColumnModifications);
 
                 tableModification.PropagateResults(valueBufferFactory.Create(reader));
                 rowsAffected++;

@@ -44,16 +44,16 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             Check.NotNull(commandStringBuilder, nameof(commandStringBuilder));
             Check.NotEmpty(modificationCommands, nameof(modificationCommands));
 
-            if ((modificationCommands.Count == 1)
-                && modificationCommands[0].ColumnModifications.All(o =>
-                    !o.IsKey
-                    || !o.IsRead
-                    || (o.Property.SqlServer().ValueGenerationStrategy == SqlServerValueGenerationStrategy.IdentityColumn)))
-            {
-                return AppendInsertOperation(commandStringBuilder, modificationCommands[0], commandPosition);
-            }
+			//if ( ( modificationCommands.Count == 1 )
+			//	&& modificationCommands[ 0 ].ColumnModifications.All( o =>
+			//		   !o.IsKey
+			//		   || !o.IsRead
+			//		   || ( o.Property.SqlServer().ValueGenerationStrategy == SqlServerValueGenerationStrategy.IdentityColumn ) ) )
+			//{
+			//	return AppendInsertOperation( commandStringBuilder, modificationCommands[ 0 ], commandPosition );
+			//}
 
-            var readOperations = modificationCommands[0].ColumnModifications.Where(o => o.IsRead).ToList();
+			var readOperations = modificationCommands[0].ColumnModifications.Where(o => o.IsRead).ToList();
             var writeOperations = modificationCommands[0].ColumnModifications.Where(o => o.IsWrite).ToList();
             var defaultValuesOnly = writeOperations.Count == 0;
             var nonIdentityOperations = defaultValuesOnly
@@ -133,34 +133,34 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             List<ColumnModification> writeOperations,
             List<ColumnModification> readOperations)
         {
-            AppendDeclareTable(
-                commandStringBuilder,
-                ToInsertTableBaseName,
-                commandPosition,
-                writeOperations,
-                PositionColumnDeclaration);
+            //AppendDeclareTable(
+            //    commandStringBuilder,
+            //    ToInsertTableBaseName,
+            //    commandPosition,
+            //    writeOperations,
+            //    PositionColumnDeclaration);
 
-            commandStringBuilder.Append("INSERT INTO ").Append(ToInsertTableBaseName).Append(commandPosition);
-            AppendValuesHeader(commandStringBuilder, writeOperations);
-            AppendValues(commandStringBuilder, writeOperations, "0");
-            for (var i = 1; i < modificationCommands.Count; i++)
-            {
-                commandStringBuilder.Append(",").AppendLine();
-                AppendValues(
-                    commandStringBuilder,
-                    modificationCommands[i].ColumnModifications.Where(o => o.IsWrite).ToList(),
-                    i.ToString());
-            }
-            commandStringBuilder
-                .AppendLine(SqlGenerationHelper.StatementTerminator)
-                .AppendLine();
+            //commandStringBuilder.Append("INSERT INTO ").Append(ToInsertTableBaseName).Append(commandPosition);
+            //AppendValuesHeader(commandStringBuilder, writeOperations);
+            //AppendValues(commandStringBuilder, writeOperations, "0");
+            //for (var i = 1; i < modificationCommands.Count; i++)
+            //{
+            //    commandStringBuilder.Append(",").AppendLine();
+            //    AppendValues(
+            //        commandStringBuilder,
+            //        modificationCommands[i].ColumnModifications.Where(o => o.IsWrite).ToList(),
+            //        i.ToString());
+            //}
+            //commandStringBuilder
+            //    .AppendLine(SqlGenerationHelper.StatementTerminator)
+            //    .AppendLine();
 
-            AppendDeclareTable(
-                commandStringBuilder,
-                InsertedTableBaseName,
-                commandPosition,
-                modificationCommands[0].ColumnModifications,
-                PositionColumnDeclaration);
+            //AppendDeclareTable(
+            //    commandStringBuilder,
+            //    InsertedTableBaseName,
+            //    commandPosition,
+            //    modificationCommands[0].ColumnModifications,
+            //    PositionColumnDeclaration);
 
             AppendMergeCommandHeader(
                 commandStringBuilder,
@@ -169,16 +169,17 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                 ToInsertTableBaseName,
                 commandPosition,
                 ToInsertTableAlias,
-                writeOperations);
+                writeOperations,
+				modificationCommands );
             AppendOutputClause(
                 commandStringBuilder,
-                modificationCommands[0].ColumnModifications,
+                readOperations,
                 InsertedTableBaseName,
                 commandPosition,
                 FullPositionColumnName);
             commandStringBuilder.AppendLine(SqlGenerationHelper.StatementTerminator);
 
-            AppendSelectCommand(commandStringBuilder, readOperations, InsertedTableBaseName, commandPosition, PositionColumnName);
+            //AppendSelectCommand(commandStringBuilder, readOperations, InsertedTableBaseName, commandPosition, PositionColumnName);
 
             return ResultSetMapping.NotLastInResultSet;
         }
@@ -225,10 +226,10 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             var conditionOperations = operations.Where(o => o.IsCondition).ToArray();
             var readOperations = operations.Where(o => o.IsRead).ToArray();
 
-            if (readOperations.Length > 0)
-            {
-                AppendDeclareTable(commandStringBuilder, InsertedTableBaseName, commandPosition, readOperations);
-            }
+            //if (readOperations.Length > 0)
+            //{
+            //    AppendDeclareTable(commandStringBuilder, InsertedTableBaseName, commandPosition, readOperations);
+            //}
             AppendUpdateCommandHeader(commandStringBuilder, name, schema, writeOperations);
             if (readOperations.Length > 0)
             {
@@ -237,11 +238,12 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             AppendWhereClause(commandStringBuilder, conditionOperations);
             commandStringBuilder.Append(SqlGenerationHelper.StatementTerminator);
 
-            if (readOperations.Length > 0)
-            {
-                return AppendSelectCommand(commandStringBuilder, readOperations, InsertedTableBaseName, commandPosition);
-            }
-            commandStringBuilder.AppendLine();
+			if ( readOperations.Length > 0 )
+			{
+				return ResultSetMapping.LastInResultSet;
+				//return AppendSelectCommand( commandStringBuilder, readOperations, InsertedTableBaseName, commandPosition );
+			}
+			commandStringBuilder.AppendLine();
 
             return AppendSelectAffectedCountCommand(commandStringBuilder, name, schema, commandPosition);
         }
@@ -253,7 +255,8 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             [NotNull] string toInsertTableName,
             int toInsertTableIndex,
             [NotNull] string toInsertTableAlias,
-            [NotNull] IReadOnlyList<ColumnModification> operations)
+            [NotNull] IReadOnlyList<ColumnModification> operations,
+			IReadOnlyList<ModificationCommand> modificationCommands )
         {
             Check.NotNull(commandStringBuilder, nameof(commandStringBuilder));
             Check.NotEmpty(name, nameof(name));
@@ -262,12 +265,65 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             commandStringBuilder.Append("MERGE ");
             SqlGenerationHelper.DelimitIdentifier(commandStringBuilder, name, schema);
 
-            commandStringBuilder
-                .Append(" USING ")
-                .Append(toInsertTableName)
-                .Append(toInsertTableIndex)
-                .Append(" AS ").Append(toInsertTableAlias).AppendLine(" ON 1=0")
-                .AppendLine("WHEN NOT MATCHED THEN");
+			var updateJoinClause = "1=0";
+			var entity = operations[ 0 ].Entry.EntityType;
+			if(entity != null)
+			{
+				var primaryKey = entity.FindPrimaryKey();
+				if ( primaryKey != null )
+				{
+					var alternateKey = entity.GetKeys().FirstOrDefault( k => k != primaryKey );
+					if ( alternateKey != null )
+					{
+						updateJoinClause = string.Join( " AND ", alternateKey.Properties
+							.Select( p => SqlGenerationHelper.DelimitIdentifier( p.SqlServer().ColumnName ) )
+							.Select( c => SqlGenerationHelper.DelimitIdentifier( name, schema ) + "." + c + " = " + toInsertTableAlias + "." + c ) );
+					}
+				}
+			}
+
+			commandStringBuilder
+				.Append( " USING ( " );
+
+			AppendValuesHeader( commandStringBuilder, operations );
+			AppendValues( commandStringBuilder, operations, "0" );
+			for ( var i = 1; i < modificationCommands.Count; i++ )
+			{
+				commandStringBuilder.Append( "," );
+				AppendValues(
+					commandStringBuilder,
+					modificationCommands[ i ].ColumnModifications.Where( o => o.IsWrite ).ToList(),
+					i.ToString() );
+			}
+
+			commandStringBuilder
+				.Append( ") AS " )
+				.Append( toInsertTableAlias )
+				.Append("(")
+				.AppendJoin( operations.Select( o=>SqlGenerationHelper.DelimitIdentifier( o.ColumnName ) ) )
+				.Append(", " + PositionColumnName)
+				.Append(")")
+				.Append( " ON " ).AppendLine( updateJoinClause );
+
+			// need to add set generated columns = their default sql, ModifiedDate = getutcdate()
+			commandStringBuilder
+				.AppendLine( "WHEN MATCHED THEN" )
+				.Append( "UPDATE SET " )
+				.AppendJoin(
+					operations,
+					SqlGenerationHelper,
+					( sb, o, helper ) =>
+					{
+						helper.DelimitIdentifier( sb, o.ColumnName );
+						sb.Append( " = " );
+						sb.Append( toInsertTableAlias );
+						sb.Append( "." );
+						helper.DelimitIdentifier( sb, o.ColumnName );
+					} )
+				.AppendLine();
+
+			commandStringBuilder
+				.AppendLine("WHEN NOT MATCHED THEN");
 
             commandStringBuilder
                 .Append("INSERT ")
@@ -395,8 +451,8 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                     .Append(", ").Append(additionalColumns);
             }
 
-            commandStringBuilder.AppendLine()
-                .Append("INTO ").Append(tableName).Append(tableIndex);
+            //commandStringBuilder.AppendLine()
+            //    .Append("INTO ").Append(tableName).Append(tableIndex);
         }
 
         private ResultSetMapping AppendSelectCommand(

@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Specification.Tests;
 using Microsoft.EntityFrameworkCore.SqlServer.FunctionalTests.Utilities;
 using Xunit;
@@ -160,6 +161,7 @@ WHERE @@ROWCOUNT = 1 AND [Id] = scope_identity();",
 
         public override void TimestampAttribute_throws_if_value_in_database_changed()
         {
+	        Debugger.Launch();
             base.TimestampAttribute_throws_if_value_in_database_changed();
 
             Assert.Equal(@"SELECT TOP(1) [r].[Id], [r].[Data], [r].[Timestamp]
