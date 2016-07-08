@@ -83,15 +83,15 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                 }
             }
 
-            if (readOperations.Count == 0)
-            {
-                return AppendBulkInsertWithoutServerValues(commandStringBuilder, modificationCommands, writeOperations);
-            }
+            //if (readOperations.Count == 0)
+            //{
+            //    return AppendBulkInsertWithoutServerValues(commandStringBuilder, modificationCommands, writeOperations);
+            //}
 
-            if (defaultValuesOnly)
-            {
-                return AppendBulkInsertWithServerValuesOnly(commandStringBuilder, modificationCommands, commandPosition, nonIdentityOperations, readOperations);
-            }
+            //if (defaultValuesOnly)
+            //{
+            //    return AppendBulkInsertWithServerValuesOnly(commandStringBuilder, modificationCommands, commandPosition, nonIdentityOperations, readOperations);
+            //}
 
             return AppendBulkInsertWithServerValues(commandStringBuilder, modificationCommands, commandPosition, writeOperations, readOperations);
         }
@@ -170,6 +170,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                 commandPosition,
                 ToInsertTableAlias,
                 writeOperations,
+				readOperations,
 				modificationCommands );
             AppendOutputClause(
                 commandStringBuilder,
@@ -255,29 +256,39 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             [NotNull] string toInsertTableName,
             int toInsertTableIndex,
             [NotNull] string toInsertTableAlias,
-            [NotNull] IReadOnlyList<ColumnModification> operations,
+            [NotNull] IReadOnlyList<ColumnModification> writeOperations,
+			[NotNull] IReadOnlyList<ColumnModification> readOperations,
 			IReadOnlyList<ModificationCommand> modificationCommands )
         {
             Check.NotNull(commandStringBuilder, nameof(commandStringBuilder));
             Check.NotEmpty(name, nameof(name));
-            Check.NotNull(operations, nameof(operations));
+            Check.NotNull(writeOperations, nameof(writeOperations));
 
             commandStringBuilder.Append("MERGE ");
             SqlGenerationHelper.DelimitIdentifier(commandStringBuilder, name, schema);
 
 			var updateJoinClause = "1=0";
-			var entity = operations[ 0 ].Entry.EntityType;
+			var entity = writeOperations[ 0 ].Entry.EntityType;
 			if(entity != null)
 			{
 				var primaryKey = entity.FindPrimaryKey();
 				if ( primaryKey != null )
 				{
-					var alternateKey = entity.GetKeys().FirstOrDefault( k => k != primaryKey );
-					if ( alternateKey != null )
+					if(readOperations.Any(m=>m.IsKey))
 					{
-						updateJoinClause = string.Join( " AND ", alternateKey.Properties
-							.Select( p => SqlGenerationHelper.DelimitIdentifier( p.SqlServer().ColumnName ) )
-							.Select( c => SqlGenerationHelper.DelimitIdentifier( name, schema ) + "." + c + " = " + toInsertTableAlias + "." + c ) );
+						var alternateKey = entity.GetKeys().FirstOrDefault( k => k != primaryKey );
+						if ( alternateKey != null )
+						{
+							updateJoinClause = string.Join( " AND ", alternateKey.Properties
+								.Select( p => SqlGenerationHelper.DelimitIdentifier( p.SqlServer().ColumnName ) )
+								.Select( c => SqlGenerationHelper.DelimitIdentifier( name, schema ) + "." + c + " = " + toInsertTableAlias + "." + c ) );
+						}
+					}
+					else
+					{
+						updateJoinClause = string.Join( " AND ", primaryKey.Properties
+								.Select( p => SqlGenerationHelper.DelimitIdentifier( p.SqlServer().ColumnName ) )
+								.Select( c => SqlGenerationHelper.DelimitIdentifier( name, schema ) + "." + c + " = " + toInsertTableAlias + "." + c ) );
 					}
 				}
 			}
@@ -285,8 +296,8 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
 			commandStringBuilder
 				.Append( " USING ( " );
 
-			AppendValuesHeader( commandStringBuilder, operations );
-			AppendValues( commandStringBuilder, operations, "0" );
+			AppendValuesHeader( commandStringBuilder, writeOperations );
+			AppendValues( commandStringBuilder, writeOperations, "0" );
 			for ( var i = 1; i < modificationCommands.Count; i++ )
 			{
 				commandStringBuilder.Append( "," );
@@ -300,7 +311,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
 				.Append( ") AS " )
 				.Append( toInsertTableAlias )
 				.Append("(")
-				.AppendJoin( operations.Select( o=>SqlGenerationHelper.DelimitIdentifier( o.ColumnName ) ) )
+				.AppendJoin( writeOperations.Select( o=>SqlGenerationHelper.DelimitIdentifier( o.ColumnName ) ) )
 				.Append(", " + PositionColumnName)
 				.Append(")")
 				.Append( " ON " ).AppendLine( updateJoinClause );
@@ -310,7 +321,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
 				.AppendLine( "WHEN MATCHED THEN" )
 				.Append( "UPDATE SET " )
 				.AppendJoin(
-					operations,
+					writeOperations.Where(c=>!c.IsKey),
 					SqlGenerationHelper,
 					( sb, o, helper ) =>
 					{
@@ -329,16 +340,16 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                 .Append("INSERT ")
                 .Append("(")
                 .AppendJoin(
-                    operations,
+                    writeOperations,
                     SqlGenerationHelper,
                     (sb, o, helper) => { helper.DelimitIdentifier(sb, o.ColumnName); })
                 .Append(")");
 
-            AppendValuesHeader(commandStringBuilder, operations);
+            AppendValuesHeader(commandStringBuilder, writeOperations);
             commandStringBuilder
                 .Append("(")
                 .AppendJoin(
-                    operations,
+                    writeOperations,
                     toInsertTableAlias,
                     SqlGenerationHelper,
                     (sb, o, alias, helper) =>

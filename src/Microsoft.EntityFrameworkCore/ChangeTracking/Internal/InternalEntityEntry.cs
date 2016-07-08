@@ -660,42 +660,42 @@ namespace Microsoft.EntityFrameworkCore.ChangeTracking.Internal
         /// </summary>
         public virtual InternalEntityEntry PrepareToSave()
         {
-            if (EntityState == EntityState.Added)
-            {
-                IProperty setProperty = null;
-                foreach (var property in EntityType.GetProperties())
-                {
-                    if (property.IsReadOnlyBeforeSave
-                        && !IsTemporaryOrDefault(property))
-                    {
-                        setProperty = property;
-                        break;
-                    }
-                }
-                if (setProperty != null)
-                {
-                    throw new InvalidOperationException(CoreStrings.PropertyReadOnlyBeforeSave(setProperty.Name, EntityType.DisplayName()));
-                }
-            }
-            else if (EntityState == EntityState.Modified)
-            {
-                IProperty modifiedProperty = null;
-                foreach (var property in EntityType.GetProperties())
-                {
-                    if (property.IsReadOnlyAfterSave
-                        && IsModified(property))
-                    {
-                        modifiedProperty = property;
-                        break;
-                    }
-                }
-                if (modifiedProperty != null)
-                {
-                    throw new InvalidOperationException(CoreStrings.PropertyReadOnlyAfterSave(modifiedProperty.Name, EntityType.DisplayName()));
-                }
-            }
+			if ( EntityState == EntityState.Added )
+			{
+				IProperty setProperty = null;
+				foreach ( var property in EntityType.GetProperties() )
+				{
+					if ( property.IsReadOnlyBeforeSave
+						&& !IsTemporaryOrDefault( property ) )
+					{
+						setProperty = property;
+						break;
+					}
+				}
+				if ( setProperty != null )
+				{
+					throw new InvalidOperationException( CoreStrings.PropertyReadOnlyBeforeSave( setProperty.Name, EntityType.DisplayName() ) );
+				}
+			}
+			else if ( EntityState == EntityState.Modified )
+			{
+				IProperty modifiedProperty = null;
+				foreach ( var property in EntityType.GetProperties() )
+				{
+					if ( property.IsReadOnlyAfterSave
+						&& IsModified( property ) )
+					{
+						modifiedProperty = property;
+						break;
+					}
+				}
+				if ( modifiedProperty != null )
+				{
+					throw new InvalidOperationException( CoreStrings.PropertyReadOnlyAfterSave( modifiedProperty.Name, EntityType.DisplayName() ) );
+				}
+			}
 
-            if (EntityType.StoreGeneratedCount() > 0)
+			if (EntityType.StoreGeneratedCount() > 0)
             {
                 _storeGeneratedValues = new StoreGeneratedValues(this);
             }
