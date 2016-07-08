@@ -269,14 +269,16 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
 
 			var updateJoinClause = "1=0";
 			var entity = writeOperations[ 0 ].Entry.EntityType;
+	        IKey primaryKey = null;
+	        IKey alternateKey = null;
 			if(entity != null)
 			{
-				var primaryKey = entity.FindPrimaryKey();
+				primaryKey = entity.FindPrimaryKey();
 				if ( primaryKey != null )
 				{
 					if(readOperations.Any(m=>m.IsKey))
 					{
-						var alternateKey = entity.GetKeys().FirstOrDefault( k => k != primaryKey );
+						alternateKey = entity.GetKeys().FirstOrDefault( k => k != primaryKey );
 						if ( alternateKey != null )
 						{
 							updateJoinClause = string.Join( " AND ", alternateKey.Properties
@@ -317,8 +319,20 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
 				.Append( " ON " ).AppendLine( updateJoinClause );
 
 			// need to add set generated columns = their default sql, ModifiedDate = getutcdate()
+	        commandStringBuilder
+		        .AppendLine( "WHEN MATCHED" );
+
+			if ( alternateKey != null )
+			{
+				commandStringBuilder
+					.Append( "AND " )
+					.AppendJoin( alternateKey.Properties
+						.Select( p => SqlGenerationHelper.DelimitIdentifier( p.SqlServer().ColumnName ) )
+						.Select( c => SqlGenerationHelper.DelimitIdentifier( name, schema ) + "." + c + " <> " + toInsertTableAlias + "." + c ), " or " );
+			}
+
 			commandStringBuilder
-				.AppendLine( "WHEN MATCHED THEN" )
+				.AppendLine("THEN")
 				.Append( "UPDATE SET " )
 				.AppendJoin(
 					writeOperations.Where(c=>!c.IsKey),
