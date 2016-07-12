@@ -318,19 +318,20 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
 				.Append(")")
 				.Append( " ON " ).AppendLine( updateJoinClause );
 
-			// need to add set generated columns = their default sql, ModifiedDate = getutcdate()
+			
 	        commandStringBuilder
 		        .AppendLine( "WHEN MATCHED" );
 
-			if ( alternateKey != null )
+			if ( entity != null )
 			{
 				commandStringBuilder
 					.Append( "AND " )
-					.AppendJoin( alternateKey.Properties
+					.AppendJoin( entity.GetProperties().Where( p=>!p.IsKey() )
 						.Select( p => SqlGenerationHelper.DelimitIdentifier( p.SqlServer().ColumnName ) )
 						.Select( c => SqlGenerationHelper.DelimitIdentifier( name, schema ) + "." + c + " <> " + toInsertTableAlias + "." + c ), " or " );
 			}
 
+			// need to add set generated columns = their default sql, ModifiedDate = getutcdate()
 			commandStringBuilder
 				.AppendLine("THEN")
 				.Append( "UPDATE SET " )
