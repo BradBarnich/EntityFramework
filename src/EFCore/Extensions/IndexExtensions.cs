@@ -62,12 +62,12 @@ namespace Microsoft.EntityFrameworkCore
             }
 
             builder
-                .AppendJoin(
+                .Append(string.Join(
                     ", ",
                     index.Properties.Select(
                         p => singleLine
                             ? p.DeclaringEntityType.DisplayName() + "." + p.Name
-                            : p.Name));
+                            : p.Name)));
 
             builder.Append(" " + index.Name ?? "<unnamed>");
 

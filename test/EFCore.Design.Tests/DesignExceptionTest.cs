@@ -54,11 +54,13 @@ namespace Microsoft.EntityFrameworkCore
             var formatter = new BinaryFormatter();
 
 #pragma warning disable SYSLIB0011 // Issue https://github.com/dotnet/runtime/issues/39289 tracks finding an alternative to BinaryFormatter
+#pragma warning disable 618
             formatter.Serialize(stream, exception);
             stream.Seek(0, SeekOrigin.Begin);
 
             return (TException)formatter.Deserialize(stream);
 #pragma warning restore SYSLIB0011
+#pragma warning restore 618
         }
     }
 }

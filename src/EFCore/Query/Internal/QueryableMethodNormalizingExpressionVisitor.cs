@@ -98,12 +98,12 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
                     }
 
                     var genericArguments = methodCallExpression.Method.GetGenericArguments();
-                    var lastGenericArgument = genericArguments[^1];
+                    var lastGenericArgument = genericArguments[genericArguments.Length - 1];
 
                     if (body.Type.IsGenericType
                         && body.Type.GetGenericTypeDefinition() == typeof(IOrderedQueryable<>))
                     {
-                        genericArguments[^1] = body.Type;
+                        genericArguments[genericArguments.Length - 1] = body.Type;
                         var newIncludeMethod = methodCallExpression.Method.GetGenericMethodDefinition()
                             .MakeGenericMethod(genericArguments);
 

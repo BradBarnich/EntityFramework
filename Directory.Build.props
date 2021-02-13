@@ -32,7 +32,7 @@
 
   <!-- HACK: Work around #15093 -->
   <PropertyGroup>
-    <NoWarn>$(NoWarn.Replace(';1591', ''))</NoWarn>
+    <NoWarn>$(NoWarn.Replace(';1591', ''));1580;1574;0419</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

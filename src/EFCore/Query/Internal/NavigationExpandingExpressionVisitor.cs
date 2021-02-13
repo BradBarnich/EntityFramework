@@ -1766,7 +1766,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
             foreach (var navigationBase in autoIncludedNavigations)
             {
                 if (navigationChain.Count > 0
-                    && navigationChain[^1].Inverse == navigationBase
+                    && navigationChain[navigationChain.Count - 1].Inverse == navigationBase
                     && navigationBase is INavigation)
                 {
                     continue;

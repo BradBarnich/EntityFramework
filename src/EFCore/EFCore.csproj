@@ -7,7 +7,7 @@ Commonly Used Types:
 Microsoft.EntityFrameworkCore.DbContext
 Microsoft.EntityFrameworkCore.DbSet
     </Description>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <MinClientVersion>3.6</MinClientVersion>
     <AssemblyName>Microsoft.EntityFrameworkCore</AssemblyName>
     <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
@@ -35,6 +35,15 @@ Microsoft.EntityFrameworkCore.DbSet
   <ItemGroup>
     <ProjectReference Include="..\EFCore.Abstractions\EFCore.Abstractions.csproj" />
     <ProjectReference Condition="'$(BuildingByReSharper)' != 'true'" Include="..\EFCore.Analyzers\EFCore.Analyzers.csproj" PrivateAssets="contentfiles;build" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.EventSource.Redist" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Transactions" />
   </ItemGroup>
 
   <ItemGroup>
