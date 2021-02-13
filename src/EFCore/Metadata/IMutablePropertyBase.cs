@@ -47,7 +47,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     </para>
         /// </summary>
         /// <param name="fieldName"> The name of the field to use. </param>
-        void SetField([CanBeNull] string fieldName)
-            => this.AsPropertyBase().SetField(fieldName, ConfigurationSource.Explicit);
+        void SetField([CanBeNull] string fieldName);
     }
 }

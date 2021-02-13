@@ -48,6 +48,9 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             public IEnumerable<IAnnotation> GetAnnotations()
                 => throw new NotImplementedException();
 
+            public PropertyAccessMode GetPropertyAccessMode()
+                => throw new NotImplementedException();
+
             public string Name { get; }
             public ITypeBase DeclaringType { get; }
             public Type ClrType { get; }

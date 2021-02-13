@@ -95,8 +95,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     Returns a value indicating whether the property was created implicitly and isn't based on the CLR model.
         /// </summary>
         /// <returns> A value indicating whether the property was created implicitly and isn't based on the CLR model. </returns>
-        bool IsImplicitlyCreated()
-            => (this.IsShadowProperty() || (DeclaringEntityType.IsPropertyBag && this.IsIndexerProperty()))
-                && GetConfigurationSource() == ConfigurationSource.Convention;
+        bool IsImplicitlyCreated();
     }
 }

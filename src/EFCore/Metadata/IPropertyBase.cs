@@ -47,8 +47,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     </para>
         /// </summary>
         /// <returns> The access mode being used, or <see langword="null" /> if the default access mode is being used. </returns>
-        PropertyAccessMode GetPropertyAccessMode()
-            => (PropertyAccessMode)(this[CoreAnnotationNames.PropertyAccessMode]
-                ?? PropertyAccessMode.PreferField);
+        PropertyAccessMode GetPropertyAccessMode();
     }
 }

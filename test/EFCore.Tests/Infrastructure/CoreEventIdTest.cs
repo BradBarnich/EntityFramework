@@ -122,6 +122,9 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
             public override Type ClrType
                 => throw new NotImplementedException();
 
+            public bool IsEagerLoaded
+                => throw new NotImplementedException();
+
             public IClrCollectionAccessor GetCollectionAccessor()
             {
                 throw new NotImplementedException();

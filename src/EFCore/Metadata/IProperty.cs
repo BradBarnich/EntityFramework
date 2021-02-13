@@ -37,16 +37,5 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     changes will not be applied to the database.
         /// </summary>
         bool IsConcurrencyToken { get; }
-
-        /// <summary>
-        ///     <para>
-        ///         Gets the <see cref="PropertyAccessMode" /> being used for this property.
-        ///         <see langword="null" /> indicates that the default property access mode is being used.
-        ///     </para>
-        /// </summary>
-        /// <returns> The access mode being used, or <see langword="null" /> if the default access mode is being used. </returns>
-        PropertyAccessMode IPropertyBase.GetPropertyAccessMode()
-            => (PropertyAccessMode)(this[CoreAnnotationNames.PropertyAccessMode]
-                ?? DeclaringType.GetPropertyAccessMode());
     }
 }
