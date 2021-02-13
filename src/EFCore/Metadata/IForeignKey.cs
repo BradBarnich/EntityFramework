@@ -80,8 +80,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     Gets the skip navigations using this foreign key.
         /// </summary>
         /// <returns> The skip navigations using this foreign key. </returns>
-        IEnumerable<ISkipNavigation> GetReferencingSkipNavigations()
-            => PrincipalEntityType.GetSkipNavigations().Where(n => !n.IsOnDependent && n.ForeignKey == this)
-                .Concat(DeclaringEntityType.GetSkipNavigations().Where(n => n.IsOnDependent && n.ForeignKey == this));
+        IEnumerable<ISkipNavigation> GetReferencingSkipNavigations();
     }
 }

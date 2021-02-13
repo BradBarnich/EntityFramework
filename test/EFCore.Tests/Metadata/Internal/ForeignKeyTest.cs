@@ -34,6 +34,9 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             public IEnumerable<IAnnotation> GetAnnotations()
                 => throw new NotImplementedException();
 
+            public IEnumerable<ISkipNavigation> GetReferencingSkipNavigations()
+                => throw new NotImplementedException();
+
             public IEntityType DeclaringEntityType { get; }
             public IReadOnlyList<IProperty> Properties { get; }
             public IEntityType PrincipalEntityType { get; }
