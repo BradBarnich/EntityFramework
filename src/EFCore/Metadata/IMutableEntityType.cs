@@ -54,8 +54,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="property"> The primary key property. </param>
         /// <returns> The newly created key. </returns>
-        IMutableKey SetPrimaryKey([CanBeNull] IMutableProperty property)
-            => SetPrimaryKey(property == null ? null : new[] { property });
+        IMutableKey SetPrimaryKey([CanBeNull] IMutableProperty property);
 
         /// <summary>
         ///     Gets primary key for this entity type. Returns <see langword="null" /> if no primary key is defined.
@@ -167,8 +166,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="memberInfo"> The navigation property on the entity class. </param>
         /// <returns> The navigation property, or <see langword="null" /> if none is found. </returns>
-        new IMutableSkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo)
-            => (IMutableSkipNavigation)((IEntityType)this).FindSkipNavigation(memberInfo);
+        new IMutableSkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo);
 
         /// <summary>
         ///     Gets a skip navigation property on this entity type. Returns <see langword="null" /> if no skip navigation property is found.
@@ -183,10 +181,9 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="name"> The name of the navigation property on the entity class. </param>
         /// <returns> The navigation property, or <see langword="null" /> if none is found. </returns>
-        new IMutableSkipNavigation FindDeclaredSkipNavigation([NotNull] string name)
-            => (IMutableSkipNavigation)((IEntityType)this).FindDeclaredSkipNavigation(name);
+        new IMutableSkipNavigation FindDeclaredSkipNavigation([NotNull] string name);
 
-        /// <summary>
+         /// <summary>
         ///     <para>
         ///         Gets all skip navigation properties declared on this entity type.
         ///     </para>
@@ -197,8 +194,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     </para>
         /// </summary>
         /// <returns> Declared foreign keys. </returns>
-        new IEnumerable<IMutableSkipNavigation> GetDeclaredSkipNavigations()
-            => ((IEntityType)this).GetDeclaredSkipNavigations().Cast<IMutableSkipNavigation>();
+        new IEnumerable<IMutableSkipNavigation> GetDeclaredSkipNavigations();
 
         /// <summary>
         ///     Gets the skip navigation properties on this entity type.

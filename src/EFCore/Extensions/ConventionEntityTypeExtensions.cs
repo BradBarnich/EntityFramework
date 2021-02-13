@@ -765,5 +765,27 @@ namespace Microsoft.EntityFrameworkCore
         public static ConfigurationSource? GetDiscriminatorValueConfigurationSource([NotNull] this IConventionEntityType entityType)
             => entityType.FindAnnotation(CoreAnnotationNames.DiscriminatorValue)
                 ?.GetConfigurationSource();
+
+        /// <summary>
+        ///     Sets the base type of this entity type. Returns <see langword="null" /> if this is not a derived type in an inheritance hierarchy.
+        /// </summary>
+        /// <param name="entityType"> The entity type. </param>
+        /// <param name="baseEntityType"> The base entity type.</param>
+        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
+        [Obsolete("Use SetBaseType")]
+        public static void HasBaseType([NotNull] this IConventionEntityType entityType, [CanBeNull] IConventionEntityType baseEntityType, bool fromDataAnnotation = false)
+            => entityType.SetBaseType(baseEntityType, fromDataAnnotation);
+
+        /// <summary>
+        ///     Sets a value indicating whether the entity type has no keys.
+        ///     When set to <see langword="true" /> it will only be usable for queries.
+        ///     <see langword="null" /> to reset to default.
+        /// </summary>
+        /// <param name="entityType"> The entity type. </param>
+        /// <param name="keyless"> A value indicating whether the entity type to has no keys. </param>
+        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
+        [Obsolete("Use SetIsKeyless")]
+        public static void HasNoKey([NotNull] this IConventionEntityType entityType, bool? keyless, bool fromDataAnnotation = false)
+            => entityType.SetIsKeyless(keyless, fromDataAnnotation);
     }
 }

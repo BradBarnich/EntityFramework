@@ -121,6 +121,15 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
 
             public IEnumerable<ISkipNavigation> GetSkipNavigations()
                 => throw new NotImplementedException();
+
+            public ISkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo)
+                => throw new NotImplementedException();
+
+            public ISkipNavigation FindDeclaredSkipNavigation([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public IEnumerable<ISkipNavigation> GetDeclaredSkipNavigations()
+                => throw new NotImplementedException();
         }
 
         [ConditionalFact]

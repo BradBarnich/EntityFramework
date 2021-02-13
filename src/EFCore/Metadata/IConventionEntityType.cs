@@ -62,15 +62,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         IConventionEntityType SetBaseType([CanBeNull] IConventionEntityType entityType, bool fromDataAnnotation = false);
 
         /// <summary>
-        ///     Sets the base type of this entity type. Returns <see langword="null" /> if this is not a derived type in an inheritance hierarchy.
-        /// </summary>
-        /// <param name="entityType"> The base entity type.</param>
-        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
-        [Obsolete("Use SetBaseType")]
-        void HasBaseType([CanBeNull] IConventionEntityType entityType, bool fromDataAnnotation = false)
-            => SetBaseType(entityType, fromDataAnnotation);
-
-        /// <summary>
         ///     Returns the configuration source for the BaseType property.
         /// </summary>
         /// <returns> The configuration source for the BaseType property. </returns>
@@ -85,17 +76,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
         /// <returns> The new configuration value. </returns>
         bool? SetIsKeyless(bool? keyless, bool fromDataAnnotation = false);
-
-        /// <summary>
-        ///     Sets a value indicating whether the entity type has no keys.
-        ///     When set to <see langword="true" /> it will only be usable for queries.
-        ///     <see langword="null" /> to reset to default.
-        /// </summary>
-        /// <param name="keyless"> A value indicating whether the entity type to has no keys. </param>
-        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
-        [Obsolete("Use SetIsKeyless")]
-        void HasNoKey(bool? keyless, bool fromDataAnnotation = false)
-            => SetIsKeyless(keyless, fromDataAnnotation);
 
         /// <summary>
         ///     Returns the configuration source for the IsKeyless property.
@@ -119,8 +99,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <returns> The newly created key. </returns>
         IConventionKey SetPrimaryKey(
             [CanBeNull] IConventionProperty property,
-            bool fromDataAnnotation = false)
-            => SetPrimaryKey(property == null ? null : new[] { property }, fromDataAnnotation);
+            bool fromDataAnnotation = false);
+        //    => SetPrimaryKey(property == null ? null : new[] { property }, fromDataAnnotation);
 
         /// <summary>
         ///     Gets primary key for this entity type. Returns <see langword="null" /> if no primary key is defined.
@@ -247,8 +227,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="memberInfo"> The navigation property on the entity class. </param>
         /// <returns> The navigation property, or <see langword="null" /> if none is found. </returns>
-        new IConventionSkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo)
-            => (IConventionSkipNavigation)((IEntityType)this).FindSkipNavigation(memberInfo);
+        new IConventionSkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo);
 
         /// <summary>
         ///     Gets a skip navigation property on this entity type. Returns <see langword="null" /> if no skip navigation property is found.
@@ -263,8 +242,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="name"> The name of the navigation property on the entity class. </param>
         /// <returns> The navigation property, or <see langword="null" /> if none is found. </returns>
-        new IConventionSkipNavigation FindDeclaredSkipNavigation([NotNull] string name)
-            => (IConventionSkipNavigation)((IEntityType)this).FindDeclaredSkipNavigation(name);
+        new IConventionSkipNavigation FindDeclaredSkipNavigation([NotNull] string name);
 
         /// <summary>
         ///     <para>
@@ -277,8 +255,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     </para>
         /// </summary>
         /// <returns> Declared foreign keys. </returns>
-        new IEnumerable<IConventionSkipNavigation> GetDeclaredSkipNavigations()
-            => ((IEntityType)this).GetDeclaredSkipNavigations().Cast<IConventionSkipNavigation>();
+        new IEnumerable<IConventionSkipNavigation> GetDeclaredSkipNavigations();
 
         /// <summary>
         ///     Gets all skip navigation properties on this entity type.

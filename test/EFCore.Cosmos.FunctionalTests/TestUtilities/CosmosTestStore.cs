@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -339,6 +340,9 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             public IAnnotation FindAnnotation(string name)
                 => throw new NotImplementedException();
 
+            public ISkipNavigation FindDeclaredSkipNavigation(string name)
+                => throw new NotImplementedException();
+
             public IForeignKey FindForeignKey(IReadOnlyList<IProperty> properties, IKey principalKey, IEntityType principalEntityType)
                 => throw new NotImplementedException();
 
@@ -363,7 +367,13 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             public ISkipNavigation FindSkipNavigation(string name)
                 => throw new NotImplementedException();
 
+            public ISkipNavigation FindSkipNavigation(MemberInfo memberInfo)
+                => throw new NotImplementedException();
+
             public IEnumerable<IAnnotation> GetAnnotations()
+                => throw new NotImplementedException();
+
+            public IEnumerable<ISkipNavigation> GetDeclaredSkipNavigations()
                 => throw new NotImplementedException();
 
             public IEnumerable<IForeignKey> GetForeignKeys()

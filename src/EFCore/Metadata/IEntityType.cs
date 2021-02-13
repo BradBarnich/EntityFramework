@@ -77,8 +77,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="memberInfo"> The navigation property on the entity class. </param>
         /// <returns> The navigation property, or <see langword="null" /> if none is found. </returns>
-        ISkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo)
-            => FindSkipNavigation(Check.NotNull(memberInfo, nameof(memberInfo)).GetSimpleMemberName());
+        ISkipNavigation FindSkipNavigation([NotNull] MemberInfo memberInfo);
 
         /// <summary>
         ///     Gets a skip navigation property on this entity type. Returns <see langword="null" /> if no skip navigation property is found.
@@ -98,11 +97,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// </summary>
         /// <param name="name"> The name of the navigation property on the entity class. </param>
         /// <returns> The navigation property, or <see langword="null" /> if none is found. </returns>
-        ISkipNavigation FindDeclaredSkipNavigation([NotNull] string name)
-        {
-            var navigation = FindSkipNavigation(name);
-            return navigation?.DeclaringEntityType == this ? navigation : null;
-        }
+        ISkipNavigation FindDeclaredSkipNavigation([NotNull] string name);
 
         /// <summary>
         ///     <para>
@@ -115,8 +110,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     </para>
         /// </summary>
         /// <returns> Declared foreign keys. </returns>
-        IEnumerable<ISkipNavigation> GetDeclaredSkipNavigations()
-            => GetSkipNavigations().Where(n => n.DeclaringEntityType == this);
+        IEnumerable<ISkipNavigation> GetDeclaredSkipNavigations();
 
         /// <summary>
         ///     Gets the skip navigation properties on this entity type.
