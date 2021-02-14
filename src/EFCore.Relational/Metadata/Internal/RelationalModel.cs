@@ -70,6 +70,10 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         public virtual SortedDictionary<string, SqlQuery> Queries { get; }
             = new SortedDictionary<string, SqlQuery>();
 
+        /// <inheritdoc />
+        public virtual IEnumerable<ISequence> Sequences
+            => Model.GetSequences();
+
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
         ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -78,6 +82,10 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         /// </summary>
         public virtual SortedDictionary<(string, string, IReadOnlyList<string>), StoreFunction> Functions { get; }
             = new SortedDictionary<(string, string, IReadOnlyList<string>), StoreFunction>(NamedListComparer.Instance);
+
+        /// <inheritdoc />
+        public virtual string Collation
+            => Model.GetCollation();
 
         /// <inheritdoc />
         public virtual ITable FindTable(string name, string schema)
@@ -96,6 +104,10 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             => Queries.TryGetValue(name, out var query)
                 ? query
                 : null;
+
+        /// <inheritdoc />
+        public virtual ISequence FindSequence(string name, string schema)
+            => Model.FindSequence(name, schema);
 
         /// <inheritdoc />
         public virtual IStoreFunction FindFunction(string name, string schema, IReadOnlyList<string> parameters)

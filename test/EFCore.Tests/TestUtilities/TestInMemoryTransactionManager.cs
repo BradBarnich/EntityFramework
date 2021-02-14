@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.InMemory.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -60,6 +61,8 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
             private TestInMemoryTransactionManager TransactionManager { get; }
 
+            public bool SupportsSavepoints => false;
+
             public void Dispose()
             {
                 TransactionManager._currentTransaction = null;
@@ -95,6 +98,24 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
                 return default;
             }
+
+            public void CreateSavepoint([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public Task CreateSavepointAsync([NotNull] string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void RollbackToSavepoint([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public Task RollbackToSavepointAsync([NotNull] string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void ReleaseSavepoint([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public Task ReleaseSavepointAsync([NotNull] string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
         }
     }
 }

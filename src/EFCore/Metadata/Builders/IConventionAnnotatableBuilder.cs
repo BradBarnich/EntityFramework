@@ -57,23 +57,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Builders
             bool fromDataAnnotation = false);
 
         /// <summary>
-        ///     Sets or removes the annotation stored under the given name.
-        /// </summary>
-        /// <param name="name"> The name of the annotation to be set. </param>
-        /// <param name="value"> The value to be stored in the annotation. <see langword="null" /> to remove the annotations. </param>
-        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
-        /// <returns>
-        ///     An <see cref="IConventionAnnotatableBuilder" /> to continue configuration if the annotation was set or removed,
-        ///     <see langword="null" /> otherwise.
-        /// </returns>
-        [Obsolete("Use HasNonNullAnnotation")]
-        IConventionAnnotatableBuilder SetOrRemoveAnnotation(
-            [NotNull] string name,
-            [CanBeNull] object value,
-            bool fromDataAnnotation = false)
-            => HasNonNullAnnotation(name, value, fromDataAnnotation);
-
-        /// <summary>
         ///     Returns a value indicating whether an annotation with the given name and value can be set from this configuration source.
         /// </summary>
         /// <param name="name"> The name of the annotation to be added. </param>
@@ -93,23 +76,52 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Builders
         IConventionAnnotatableBuilder HasNoAnnotation([NotNull] string name, bool fromDataAnnotation = false);
 
         /// <summary>
-        ///     Removes the annotation with the given name from this object.
-        /// </summary>
-        /// <param name="name"> The name of the annotation to remove. </param>
-        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
-        /// <returns>
-        ///     An <see cref="IConventionAnnotatableBuilder" /> to continue configuration if the annotation was set, <see langword="null" /> otherwise.
-        /// </returns>
-        [Obsolete("Use HasNoAnnotation")]
-        IConventionAnnotatableBuilder RemoveAnnotation([NotNull] string name, bool fromDataAnnotation = false)
-            => HasNoAnnotation(name, fromDataAnnotation);
-
-        /// <summary>
         ///     Returns a value indicating whether an annotation with the given name can be removed using this configuration source.
         /// </summary>
         /// <param name="name"> The name of the annotation to remove. </param>
         /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
         /// <returns> <see langword="true" /> if the annotation can be removed, <see langword="false" /> otherwise. </returns>
         bool CanRemoveAnnotation([NotNull] string name, bool fromDataAnnotation = false);
+    }
+
+    /// <summary>
+    /// IConventionAnnotatableBuilder interface implementations
+    /// </summary>
+    public static class ConventionAnnotatableBuilderExtensions
+    {
+        /// <summary>
+        ///     Sets or removes the annotation stored under the given name.
+        /// </summary>
+        /// <param name="builder">IConventionAnnotatableBuilder</param>
+        /// <param name="name"> The name of the annotation to be set. </param>
+        /// <param name="value"> The value to be stored in the annotation. <see langword="null" /> to remove the annotations. </param>
+        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
+        /// <returns>
+        ///     An <see cref="IConventionAnnotatableBuilder" /> to continue configuration if the annotation was set or removed,
+        ///     <see langword="null" /> otherwise.
+        /// </returns>
+        [Obsolete("Use HasNonNullAnnotation")]
+        public static IConventionAnnotatableBuilder SetOrRemoveAnnotation(
+            [NotNull] this IConventionAnnotatableBuilder builder,
+            [NotNull] string name,
+            [CanBeNull] object value,
+            bool fromDataAnnotation = false)
+            => builder.HasNonNullAnnotation(name, value, fromDataAnnotation);
+
+        /// <summary>
+        ///     Removes the annotation with the given name from this object.
+        /// </summary>
+        /// <param name="builder">IConventionAnnotatableBuilder</param>
+        /// <param name="name"> The name of the annotation to remove. </param>
+        /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
+        /// <returns>
+        ///     An <see cref="IConventionAnnotatableBuilder" /> to continue configuration if the annotation was set, <see langword="null" /> otherwise.
+        /// </returns>
+        [Obsolete("Use HasNoAnnotation")]
+        public static IConventionAnnotatableBuilder RemoveAnnotation(
+            [NotNull]this IConventionAnnotatableBuilder builder,
+            [NotNull] string name,
+            bool fromDataAnnotation = false)
+            => builder.HasNoAnnotation(name, fromDataAnnotation);
     }
 }

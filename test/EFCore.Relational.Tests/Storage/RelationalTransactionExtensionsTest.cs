@@ -74,6 +74,27 @@ namespace Microsoft.EntityFrameworkCore.Storage
             public Task RollbackAsync(CancellationToken cancellationToken = default)
                 => throw new NotImplementedException();
 
+            public void CreateSavepoint(string name)
+                => throw new NotImplementedException();
+
+            public Task CreateSavepointAsync(string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void RollbackToSavepoint(string name)
+                => throw new NotImplementedException();
+
+            public Task RollbackToSavepointAsync(string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void ReleaseSavepoint(string name)
+                => throw new NotImplementedException();
+
+            public Task ReleaseSavepointAsync(string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public bool SupportsSavepoints
+                => false;
+
             public ValueTask DisposeAsync()
                 => throw new NotImplementedException();
         }

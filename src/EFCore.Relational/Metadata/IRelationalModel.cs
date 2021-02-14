@@ -37,8 +37,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Returns all sequences contained in the model.
         /// </summary>
-        IEnumerable<ISequence> Sequences
-            => Model.GetSequences();
+        IEnumerable<ISequence> Sequences { get; }
 
         /// <summary>
         ///     Returns all user-defined functions contained in the model.
@@ -48,8 +47,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Returns the database collation.
         /// </summary>
-        string Collation
-            => Model.GetCollation();
+        string Collation { get; }
 
         /// <summary>
         ///     Gets the table with the given name. Returns <see langword="null" /> if no table with the given name is defined.
@@ -83,8 +81,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     The <see cref="ISequence" /> or <see langword="null" /> if no sequence with the given name in
         ///     the given schema was found.
         /// </returns>
-        ISequence FindSequence([NotNull] string name, [CanBeNull] string schema)
-            => Model.FindSequence(name, schema);
+        ISequence FindSequence([NotNull] string name, [CanBeNull] string schema);
 
         /// <summary>
         ///     Finds a <see cref="IStoreFunction" /> with the given signature.

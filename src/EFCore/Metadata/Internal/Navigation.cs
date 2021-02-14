@@ -346,6 +346,34 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             => (PropertyAccessMode)(this[CoreAnnotationNames.PropertyAccessMode]
                 ?? DeclaringType.GetNavigationAccessMode());
 
+        IEntityType INavigationBase.DeclaringEntityType
+        {
+            [DebuggerStepThrough]
+            get => ((INavigation)this).DeclaringEntityType;
+        }
+
+        IEntityType INavigationBase.TargetEntityType
+        {
+            [DebuggerStepThrough]
+            get => ((INavigation)this).TargetEntityType;
+        }
+
+        INavigationBase INavigationBase.Inverse
+        {
+            [DebuggerStepThrough]
+            get => ((INavigation)this).Inverse;
+        }
+
+        bool INavigationBase.IsCollection
+        {
+            [DebuggerStepThrough]
+            get => ((INavigation)this).IsCollection;
+        }
+
+        [DebuggerStepThrough]
+        IClrCollectionAccessor INavigationBase.GetCollectionAccessor()
+            => CollectionAccessor;
+
         bool INavigationBase.IsEagerLoaded
             => (bool?)this[CoreAnnotationNames.EagerLoaded] ?? false;
 
@@ -407,6 +435,9 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             [DebuggerStepThrough]
             get => !IsOnDependent && !ForeignKey.IsUnique;
         }
+
+        IClrCollectionAccessor INavigation.GetCollectionAccessor()
+            => CollectionAccessor;
 
         void IMutableNavigationBase.SetIsEagerLoaded(bool? eagerLoaded)
             => this.SetOrRemoveAnnotation(CoreAnnotationNames.EagerLoaded, eagerLoaded);

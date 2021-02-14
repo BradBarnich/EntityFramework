@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -241,6 +242,8 @@ namespace Microsoft.EntityFrameworkCore
 
             public Guid TransactionId { get; }
 
+            public bool SupportsSavepoints => false;
+
             public void Commit()
                 => throw new NotImplementedException();
 
@@ -251,6 +254,24 @@ namespace Microsoft.EntityFrameworkCore
                 => throw new NotImplementedException();
 
             public Task RollbackAsync(CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void CreateSavepoint([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public Task CreateSavepointAsync([NotNull] string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void RollbackToSavepoint([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public Task RollbackToSavepointAsync([NotNull] string name, CancellationToken cancellationToken = default)
+                => throw new NotImplementedException();
+
+            public void ReleaseSavepoint([NotNull] string name)
+                => throw new NotImplementedException();
+
+            public Task ReleaseSavepointAsync([NotNull] string name, CancellationToken cancellationToken = default)
                 => throw new NotImplementedException();
         }
 

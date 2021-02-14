@@ -96,7 +96,11 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             public object GetOrCreate(object entity, bool forMaterialization)
                 => throw new NotImplementedException();
 
+            public IClrCollectionAccessor GetCollectionAccessor()
+                => throw new NotImplementedException();
+
             public Type CollectionType { get; }
+            INavigationBase INavigationBase.Inverse { get; }
         }
 
         [ConditionalFact]

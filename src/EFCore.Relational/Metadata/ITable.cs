@@ -2,10 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Utilities;
 
 namespace Microsoft.EntityFrameworkCore.Metadata
 {
@@ -52,15 +49,12 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the check constraints for this table.
         /// </summary>
-        IEnumerable<ICheckConstraint> CheckConstraints
-            => EntityTypeMappings.SelectMany(m => CheckConstraint.GetCheckConstraints(m.EntityType))
-                .Distinct((x, y) => x.Name == y.Name);
+        IEnumerable<ICheckConstraint> CheckConstraints { get; }
 
         /// <summary>
         ///     Gets the comment for this table.
         /// </summary>
-        public virtual string Comment
-            => EntityTypeMappings.Select(e => e.EntityType.GetComment()).FirstOrDefault(c => c != null);
+        string Comment { get; }
 
         /// <summary>
         ///     Gets the column with a given name. Returns <see langword="null" /> if no column with the given name is defined.

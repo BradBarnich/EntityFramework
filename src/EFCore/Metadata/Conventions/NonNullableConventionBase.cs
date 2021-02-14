@@ -56,6 +56,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions
 
             var state = GetOrInitializeState(modelBuilder);
 
+#if !NETFRAMEWORK
             // First check for [MaybeNull] on the return value. If it exists, the member is nullable.
             // Note: avoid using GetCustomAttribute<> below because of https://github.com/mono/mono/issues/17477
             var isMaybeNull = memberInfo switch
@@ -71,6 +72,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions
             {
                 return false;
             }
+#endif
 
             // For C# 8.0 nullable types, the C# compiler currently synthesizes a NullableAttribute that expresses nullability into
             // assemblies it produces. If the model is spread across more than one assembly, there will be multiple versions of this

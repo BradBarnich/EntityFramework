@@ -43,11 +43,25 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             public FieldInfo FieldInfo { get; }
             public IEntityType DeclaringEntityType { get; }
             public IEntityType TargetEntityType { get; }
+
+            INavigationBase INavigationBase.Inverse
+                => Inverse;
+
             public INavigation Inverse { get; }
             public bool IsCollection { get; }
             public IForeignKey ForeignKey { get; }
             public bool IsOnDependent { get; }
             public bool IsEagerLoaded { get; }
+
+            IClrCollectionAccessor INavigation.GetCollectionAccessor()
+            {
+                throw new NotImplementedException();
+            }
+
+            IClrCollectionAccessor INavigationBase.GetCollectionAccessor()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [ConditionalFact]

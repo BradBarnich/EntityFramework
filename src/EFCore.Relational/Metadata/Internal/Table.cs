@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Utilities;
 
 namespace Microsoft.EntityFrameworkCore.Metadata.Internal
 {
@@ -119,6 +120,15 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         /// </summary>
         public virtual SortedDictionary<string, TableIndex> Indexes { get; }
             = new SortedDictionary<string, TableIndex>();
+
+        /// <inheritdoc />
+        public virtual IEnumerable<ICheckConstraint> CheckConstraints
+            => EntityTypeMappings.SelectMany(m => CheckConstraint.GetCheckConstraints(m.EntityType))
+            .Distinct((x, y) => x.Name == y.Name);
+
+        /// <inheritdoc />
+        public virtual string Comment
+            => EntityTypeMappings.Select(e => e.EntityType.GetComment()).FirstOrDefault(c => c != null);
 
         /// <inheritdoc />
         public virtual bool IsExcludedFromMigrations { get; set; }

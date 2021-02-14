@@ -84,8 +84,6 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
                 default:
                     return base.VisitExtension(extensionExpression);
             }
-
-            ;
         }
 
         private Expression VisitSelect(SelectExpression selectExpression)

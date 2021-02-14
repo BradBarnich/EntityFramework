@@ -4,6 +4,7 @@
 using System;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Storage;
+#pragma warning disable 162
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities
 {
