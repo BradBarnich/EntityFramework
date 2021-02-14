@@ -22,17 +22,12 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <param name="eagerLoaded"> A value indicating whether this navigation should be eager loaded by default. </param>
         /// <param name="fromDataAnnotation"> Indicates whether the configuration was specified using a data annotation. </param>
         /// <returns> The configured value. </returns>
-        bool? SetIsEagerLoaded(bool? eagerLoaded, bool fromDataAnnotation = false)
-        {
-            this.SetOrRemoveAnnotation(CoreAnnotationNames.EagerLoaded, eagerLoaded, fromDataAnnotation);
-            return eagerLoaded;
-        }
+        bool? SetIsEagerLoaded(bool? eagerLoaded, bool fromDataAnnotation = false);
 
         /// <summary>
         ///     Returns the configuration source for <see cref="NavigationExtensions.IsEagerLoaded" />.
         /// </summary>
         /// <returns> The configuration source for <see cref="NavigationExtensions.IsEagerLoaded" />. </returns>
-        ConfigurationSource? GetIsEagerLoadedConfigurationSource()
-            => FindAnnotation(CoreAnnotationNames.EagerLoaded)?.GetConfigurationSource();
+        ConfigurationSource? GetIsEagerLoadedConfigurationSource();
     }
 }

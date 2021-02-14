@@ -33,8 +33,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets a value indicating whether this navigation should be eager loaded by default.
         /// </summary>
-        bool IsEagerLoaded
-            => (bool?)this[CoreAnnotationNames.EagerLoaded] ?? false;
+        bool IsEagerLoaded { get; }
 
         /// <summary>
         ///     Gets the <see cref="IClrCollectionAccessor" /> for this navigation property, if it's a collection

@@ -27,47 +27,22 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the type that this navigation property belongs to.
         /// </summary>
-        new IConventionEntityType DeclaringEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IConventionEntityType)((INavigationBase)this).DeclaringEntityType;
-        }
+        new IConventionEntityType DeclaringEntityType { get; }
 
         /// <summary>
         ///     Gets the entity type that this navigation property will hold an instance(s) of.
         /// </summary>
-        new IConventionEntityType TargetEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IConventionEntityType)((INavigationBase)this).TargetEntityType;
-        }
-
-        /// <summary>
-        ///     Returns the configuration source for this navigation property.
-        /// </summary>
-        /// <returns> The configuration source. </returns>
-        ConfigurationSource IConventionPropertyBase.GetConfigurationSource()
-            => (ConfigurationSource)(IsOnDependent
-                ? ForeignKey.GetDependentToPrincipalConfigurationSource()
-                : ForeignKey.GetPrincipalToDependentConfigurationSource());
+        new IConventionEntityType TargetEntityType { get; }
 
         /// <summary>
         ///     Gets the foreign key that defines the relationship this navigation property will navigate.
         /// </summary>
-        new IConventionForeignKey ForeignKey
-        {
-            [DebuggerStepThrough]
-            get => (IConventionForeignKey)((INavigation)this).ForeignKey;
-        }
+        new IConventionForeignKey ForeignKey { get; }
 
         /// <summary>
         ///     Gets the inverse navigation.
         /// </summary>
-        new IConventionNavigation Inverse
-        {
-            [DebuggerStepThrough]
-            get => (IConventionNavigation)((INavigation)this).Inverse;
-        }
+        new IConventionNavigation Inverse { get; }
 
         /// <summary>
         ///     Sets the inverse navigation.

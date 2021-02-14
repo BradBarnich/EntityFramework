@@ -21,38 +21,22 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the type that this navigation property belongs to.
         /// </summary>
-        new IMutableEntityType DeclaringEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IMutableEntityType)((INavigationBase)this).DeclaringEntityType;
-        }
+        new IMutableEntityType DeclaringEntityType { get; }
 
         /// <summary>
         ///     Gets the entity type that this navigation property will hold an instance(s) of.
         /// </summary>
-        new IMutableEntityType TargetEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IMutableEntityType)((INavigationBase)this).TargetEntityType;
-        }
+        new IMutableEntityType TargetEntityType { get; }
 
         /// <summary>
         ///     Gets the join type used by the foreign key.
         /// </summary>
-        new IMutableEntityType JoinEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IMutableEntityType)((ISkipNavigation)this).JoinEntityType;
-        }
+        new IMutableEntityType JoinEntityType { get; }
 
         /// <summary>
         ///     Gets the foreign key to the join type.
         /// </summary>
-        new IMutableForeignKey ForeignKey
-        {
-            [DebuggerStepThrough]
-            get => (IMutableForeignKey)((ISkipNavigation)this).ForeignKey;
-        }
+        new IMutableForeignKey ForeignKey { get; }
 
         /// <summary>
         ///     Sets the foreign key.
@@ -65,11 +49,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the inverse skip navigation.
         /// </summary>
-        new IMutableSkipNavigation Inverse
-        {
-            [DebuggerStepThrough]
-            get => (IMutableSkipNavigation)((ISkipNavigation)this).Inverse;
-        }
+        new IMutableSkipNavigation Inverse { get; }
+
 
         /// <summary>
         ///     Sets the inverse skip navigation.

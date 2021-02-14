@@ -21,38 +21,22 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the type that this navigation property belongs to.
         /// </summary>
-        new IMutableEntityType DeclaringEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IMutableEntityType)((INavigationBase)this).DeclaringEntityType;
-        }
+        new IMutableEntityType DeclaringEntityType { get; }
 
         /// <summary>
         ///     Gets the entity type that this navigation property will hold an instance(s) of.
         /// </summary>
-        new IMutableEntityType TargetEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IMutableEntityType)((INavigationBase)this).TargetEntityType;
-        }
+        new IMutableEntityType TargetEntityType  { get; }
 
         /// <summary>
         ///     Gets the foreign key that defines the relationship this navigation property will navigate.
         /// </summary>
-        new IMutableForeignKey ForeignKey
-        {
-            [DebuggerStepThrough]
-            get => (IMutableForeignKey)((INavigation)this).ForeignKey;
-        }
+        new IMutableForeignKey ForeignKey  { get; }
 
         /// <summary>
         ///     Gets the inverse navigation.
         /// </summary>
-        new IMutableNavigation Inverse
-        {
-            [DebuggerStepThrough]
-            get => (IMutableNavigation)((INavigation)this).Inverse;
-        }
+        new IMutableNavigation Inverse  { get; }
 
         /// <summary>
         ///     Sets the inverse navigation.

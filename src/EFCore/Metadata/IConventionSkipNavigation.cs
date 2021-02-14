@@ -27,38 +27,22 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the type that this navigation property belongs to.
         /// </summary>
-        new IConventionEntityType DeclaringEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IConventionEntityType)((INavigationBase)this).DeclaringEntityType;
-        }
+        new IConventionEntityType DeclaringEntityType { get; }
 
         /// <summary>
         ///     Gets the entity type that this navigation property will hold an instance(s) of.
         /// </summary>
-        new IConventionEntityType TargetEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IConventionEntityType)((INavigationBase)this).TargetEntityType;
-        }
+        new IConventionEntityType TargetEntityType { get; }
 
         /// <summary>
         ///     Gets the join type used by the foreign key.
         /// </summary>
-        new IConventionEntityType JoinEntityType
-        {
-            [DebuggerStepThrough]
-            get => (IConventionEntityType)((ISkipNavigation)this).JoinEntityType;
-        }
+        new IConventionEntityType JoinEntityType { get; }
 
         /// <summary>
         ///     Gets the foreign key to the join type.
         /// </summary>
-        new IConventionForeignKey ForeignKey
-        {
-            [DebuggerStepThrough]
-            get => (IConventionForeignKey)((ISkipNavigation)this).ForeignKey;
-        }
+        new IConventionForeignKey ForeignKey  { get; }
 
         /// <summary>
         ///     Sets the foreign key.
@@ -79,11 +63,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the inverse skip navigation.
         /// </summary>
-        new IConventionSkipNavigation Inverse
-        {
-            [DebuggerStepThrough]
-            get => (IConventionSkipNavigation)((ISkipNavigation)this).Inverse;
-        }
+        new IConventionSkipNavigation Inverse { get; }
 
         /// <summary>
         ///     Sets the inverse skip navigation.

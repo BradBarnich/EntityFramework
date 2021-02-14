@@ -346,6 +346,9 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             => (PropertyAccessMode)(this[CoreAnnotationNames.PropertyAccessMode]
                 ?? DeclaringType.GetNavigationAccessMode());
 
+        bool INavigationBase.IsEagerLoaded
+            => (bool?)this[CoreAnnotationNames.EagerLoaded] ?? false;
+
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
         ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -357,6 +360,77 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             [DebuggerStepThrough] get => ForeignKey;
         }
 
+        /// <summary>
+        ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+        ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+        ///     any release. You should only use it directly in your code with extreme caution and knowing that
+        ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+        /// </summary>
+        IEntityType INavigation.DeclaringEntityType
+        {
+            [DebuggerStepThrough]
+            get => IsOnDependent ? ForeignKey.DeclaringEntityType : ForeignKey.PrincipalEntityType;
+        }
+
+        /// <summary>
+        ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+        ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+        ///     any release. You should only use it directly in your code with extreme caution and knowing that
+        ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+        /// </summary>
+        IEntityType INavigation.TargetEntityType
+        {
+            [DebuggerStepThrough]
+            get => IsOnDependent ? ForeignKey.PrincipalEntityType : ForeignKey.DeclaringEntityType;
+        }
+
+        /// <summary>
+        ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+        ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+        ///     any release. You should only use it directly in your code with extreme caution and knowing that
+        ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+        /// </summary>
+        INavigation INavigation.Inverse
+        {
+            [DebuggerStepThrough]
+            get => IsOnDependent ? ForeignKey.PrincipalToDependent : ForeignKey.DependentToPrincipal;
+        }
+
+        /// <summary>
+        ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+        ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+        ///     any release. You should only use it directly in your code with extreme caution and knowing that
+        ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+        /// </summary>
+        bool INavigation.IsCollection
+        {
+            [DebuggerStepThrough]
+            get => !IsOnDependent && !ForeignKey.IsUnique;
+        }
+
+        void IMutableNavigationBase.SetIsEagerLoaded(bool? eagerLoaded)
+            => this.SetOrRemoveAnnotation(CoreAnnotationNames.EagerLoaded, eagerLoaded);
+
+        IMutableEntityType IMutableNavigation.DeclaringEntityType
+        {
+            [DebuggerStepThrough] get => DeclaringEntityType;
+        }
+
+        IMutableEntityType IMutableNavigation.TargetEntityType
+        {
+            [DebuggerStepThrough] get => TargetEntityType;
+        }
+
+        IMutableForeignKey IMutableNavigation.ForeignKey
+        {
+            [DebuggerStepThrough] get => ForeignKey;
+        }
+
+        IMutableNavigation IMutableNavigation.Inverse
+        {
+            [DebuggerStepThrough] get => Inverse;
+        }
+
         [DebuggerStepThrough]
         IMutableNavigation IMutableNavigation.SetInverse([CanBeNull] string inverseName)
             => SetInverse(inverseName, ConfigurationSource.Explicit);
@@ -364,6 +438,17 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         [DebuggerStepThrough]
         IMutableNavigation IMutableNavigation.SetInverse([CanBeNull] MemberInfo inverse)
             => SetInverse(inverse, ConfigurationSource.Explicit);
+
+        [DebuggerStepThrough]
+        bool? IConventionNavigationBase.SetIsEagerLoaded(bool? eagerLoaded, bool fromDataAnnotation)
+        {
+            this.SetOrRemoveAnnotation(CoreAnnotationNames.EagerLoaded, eagerLoaded, fromDataAnnotation);
+            return eagerLoaded;
+        }
+
+        [DebuggerStepThrough]
+        ConfigurationSource? IConventionNavigationBase.GetIsEagerLoadedConfigurationSource()
+            => FindAnnotation(CoreAnnotationNames.EagerLoaded)?.GetConfigurationSource();
 
         [DebuggerStepThrough]
         IConventionNavigation IConventionNavigation.SetInverse([CanBeNull] string inverseName, bool fromDataAnnotation)
@@ -377,6 +462,29 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         {
             [DebuggerStepThrough] get => Builder;
         }
+
+        IConventionEntityType IConventionNavigation.DeclaringEntityType
+        {
+            [DebuggerStepThrough] get => DeclaringEntityType;
+        }
+
+        IConventionEntityType IConventionNavigation.TargetEntityType
+        {
+            [DebuggerStepThrough] get => TargetEntityType;
+        }
+
+        IConventionForeignKey IConventionNavigation.ForeignKey
+        {
+            [DebuggerStepThrough] get => ForeignKey;
+        }
+
+        IConventionNavigation IConventionNavigation.Inverse
+        {
+            [DebuggerStepThrough] get => Inverse;
+        }
+
+        ConfigurationSource IConventionPropertyBase.GetConfigurationSource()
+            => GetConfigurationSource();
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

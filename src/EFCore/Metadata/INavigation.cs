@@ -14,38 +14,22 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the entity type that this navigation property belongs to.
         /// </summary>
-        new IEntityType DeclaringEntityType
-        {
-            [DebuggerStepThrough]
-            get => IsOnDependent ? ForeignKey.DeclaringEntityType : ForeignKey.PrincipalEntityType;
-        }
+        new IEntityType DeclaringEntityType { get; }
 
         /// <summary>
         ///     Gets the entity type that this navigation property will hold an instance(s) of.
         /// </summary>
-        new IEntityType TargetEntityType
-        {
-            [DebuggerStepThrough]
-            get => IsOnDependent ? ForeignKey.PrincipalEntityType : ForeignKey.DeclaringEntityType;
-        }
+        new IEntityType TargetEntityType { get; }
 
         /// <summary>
         ///     Gets the inverse navigation.
         /// </summary>
-        new INavigation Inverse
-        {
-            [DebuggerStepThrough]
-            get => IsOnDependent ? ForeignKey.PrincipalToDependent : ForeignKey.DependentToPrincipal;
-        }
+        new INavigation Inverse { get; }
 
         /// <summary>
         ///     Gets a value indicating whether the navigation property is a collection property.
         /// </summary>
-        new bool IsCollection
-        {
-            [DebuggerStepThrough]
-            get => !IsOnDependent && !ForeignKey.IsUnique;
-        }
+        new bool IsCollection { get; }
 
         /// <summary>
         ///     Gets the foreign key that defines the relationship this navigation property will navigate.
@@ -55,11 +39,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets a value indicating whether the navigation property is defined on the dependent side of the underlying foreign key.
         /// </summary>
-        bool IsOnDependent
-        {
-            [DebuggerStepThrough]
-            get => ForeignKey.DependentToPrincipal == this;
-        }
+        bool IsOnDependent { get; }
 
         /// <summary>
         ///     Gets the <see cref="IClrCollectionAccessor" /> for this navigation property, if it's a collection

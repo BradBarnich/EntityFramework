@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -61,7 +62,24 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             public PropertyInfo PropertyInfo { get; set; }
             public FieldInfo FieldInfo { get; }
             public IEntityType DeclaringEntityType { get; }
+            public IEntityType TargetEntityType { get; }
+            public INavigation Inverse { get; }
+
+            public bool IsCollection
+            {
+                [DebuggerStepThrough]
+                get => !IsOnDependent && !ForeignKey.IsUnique;
+            }
+
+            public bool IsEagerLoaded { get; }
+
             public IForeignKey ForeignKey { get; set; }
+
+            public bool IsOnDependent
+            {
+                [DebuggerStepThrough]
+                get => ForeignKey.DependentToPrincipal == this;
+            }
 
             public bool Add(object entity, object value, bool forMaterialization)
                 => throw new NotImplementedException();

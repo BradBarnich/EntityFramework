@@ -15,22 +15,12 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         /// <summary>
         ///     Gets the join type used by the foreign key.
         /// </summary>
-        IEntityType JoinEntityType
-            => IsOnDependent ? ForeignKey?.PrincipalEntityType : ForeignKey?.DeclaringEntityType;
+        IEntityType JoinEntityType { get; }
 
         /// <summary>
         ///     Gets the inverse skip navigation.
         /// </summary>
         new ISkipNavigation Inverse { get; }
-
-        /// <summary>
-        ///     Gets the inverse navigation.
-        /// </summary>
-        INavigationBase INavigationBase.Inverse
-        {
-            [DebuggerStepThrough]
-            get => Inverse;
-        }
 
         /// <summary>
         ///     Gets the foreign key to the join type.
@@ -41,13 +31,5 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         ///     Gets a value indicating whether the navigation property is defined on the dependent side of the underlying foreign key.
         /// </summary>
         bool IsOnDependent { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="IClrCollectionAccessor" /> for this navigation property, if it's a collection
-        ///     navigation.
-        /// </summary>
-        /// <returns> The accessor. </returns>
-        IClrCollectionAccessor INavigationBase.GetCollectionAccessor()
-            => ((SkipNavigation)this).CollectionAccessor;
     }
 }

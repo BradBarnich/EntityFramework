@@ -356,11 +356,44 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         public override string ToString()
             => this.ToDebugString(MetadataDebugStringOptions.SingleLineDefault);
 
+        IEntityType ISkipNavigation.JoinEntityType
+            => IsOnDependent ? ForeignKey?.PrincipalEntityType : ForeignKey?.DeclaringEntityType;
+
         /// <inheritdoc />
         IConventionSkipNavigationBuilder IConventionSkipNavigation.Builder
         {
             [DebuggerStepThrough]
             get => Builder;
+        }
+
+        IConventionEntityType IConventionSkipNavigation.DeclaringEntityType
+        {
+            [DebuggerStepThrough]
+            get => DeclaringEntityType;
+        }
+
+        IConventionEntityType IConventionSkipNavigation.TargetEntityType
+        {
+            [DebuggerStepThrough]
+            get => TargetEntityType;
+        }
+
+        IConventionEntityType IConventionSkipNavigation.JoinEntityType
+        {
+            [DebuggerStepThrough]
+            get => JoinEntityType;
+        }
+
+        IConventionForeignKey IConventionSkipNavigation.ForeignKey
+        {
+            [DebuggerStepThrough]
+            get => ForeignKey;
+        }
+
+        IConventionSkipNavigation IConventionSkipNavigation.Inverse
+        {
+            [DebuggerStepThrough]
+            get => Inverse;
         }
 
         /// <inheritdoc />
@@ -384,8 +417,47 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             get => TargetEntityType;
         }
 
+        bool INavigationBase.IsEagerLoaded
+            => (bool?)this[CoreAnnotationNames.EagerLoaded] ?? false;
+
+        INavigationBase INavigationBase.Inverse
+        {
+            [DebuggerStepThrough]
+            get => Inverse;
+        }
+
+        IClrCollectionAccessor INavigationBase.GetCollectionAccessor()
+            => ((SkipNavigation)this).CollectionAccessor;
+
+        void IMutableNavigationBase.SetIsEagerLoaded(bool? eagerLoaded)
+            => this.SetOrRemoveAnnotation(CoreAnnotationNames.EagerLoaded, eagerLoaded);
+
         /// <inheritdoc />
         IForeignKey ISkipNavigation.ForeignKey
+        {
+            [DebuggerStepThrough]
+            get => ForeignKey;
+        }
+
+        IMutableEntityType IMutableSkipNavigation.DeclaringEntityType
+        {
+            [DebuggerStepThrough]
+            get => DeclaringEntityType;
+        }
+
+        IMutableEntityType IMutableSkipNavigation.TargetEntityType
+        {
+            [DebuggerStepThrough]
+            get => TargetEntityType;
+        }
+
+        IMutableEntityType IMutableSkipNavigation.JoinEntityType
+        {
+            [DebuggerStepThrough]
+            get => JoinEntityType;
+        }
+
+        IMutableForeignKey IMutableSkipNavigation.ForeignKey
         {
             [DebuggerStepThrough]
             get => ForeignKey;
@@ -395,6 +467,23 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         [DebuggerStepThrough]
         void IMutableSkipNavigation.SetForeignKey([CanBeNull] IMutableForeignKey foreignKey)
             => SetForeignKey((ForeignKey)foreignKey, ConfigurationSource.Explicit);
+
+        IMutableSkipNavigation IMutableSkipNavigation.Inverse
+        {
+            [DebuggerStepThrough]
+            get => Inverse;
+        }
+
+        [DebuggerStepThrough]
+        bool? IConventionNavigationBase.SetIsEagerLoaded(bool? eagerLoaded, bool fromDataAnnotation)
+        {
+            this.SetOrRemoveAnnotation(CoreAnnotationNames.EagerLoaded, eagerLoaded, fromDataAnnotation);
+            return eagerLoaded;
+        }
+
+        [DebuggerStepThrough]
+        ConfigurationSource? IConventionNavigationBase.GetIsEagerLoadedConfigurationSource()
+            => FindAnnotation(CoreAnnotationNames.EagerLoaded)?.GetConfigurationSource();
 
         /// <inheritdoc />
         [DebuggerStepThrough]

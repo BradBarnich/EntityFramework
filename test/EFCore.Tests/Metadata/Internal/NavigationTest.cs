@@ -42,7 +42,11 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             public PropertyInfo PropertyInfo { get; }
             public FieldInfo FieldInfo { get; }
             public IEntityType DeclaringEntityType { get; }
+            public IEntityType TargetEntityType { get; }
+            public INavigation Inverse { get; }
+            public bool IsCollection { get; }
             public IForeignKey ForeignKey { get; }
+            public bool IsOnDependent { get; }
             public bool IsEagerLoaded { get; }
         }
 
