@@ -6,7 +6,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;

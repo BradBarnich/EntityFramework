@@ -6,7 +6,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.Configuration;

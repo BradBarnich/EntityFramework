@@ -4,7 +4,11 @@
 #if RELEASE20 || RELEASE21 || RELEASE22 || DEBUG20 || DEBUG21 || DEBUG22
 using System.Data.SqlClient;
 #else
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 #endif
 using System.IO;
 using Microsoft.Extensions.Configuration;

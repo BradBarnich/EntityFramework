@@ -4,7 +4,11 @@
 using System.Collections.Concurrent;
 using System.Data.Common;
 using JetBrains.Annotations;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -52,6 +56,7 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal
         protected override void OpenDbConnection(bool errorsExpected)
         {
             // Note: Not needed for the Async overload: see https://github.com/dotnet/SqlClient/issues/615
+#if !NETFRAMEWORK
             if (errorsExpected
                 && DbConnection is SqlConnection sqlConnection)
             {
@@ -59,8 +64,11 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal
             }
             else
             {
+#endif
                 DbConnection.Open();
+#if !NETFRAMEWORK
             }
+#endif
         }
 
         /// <summary>

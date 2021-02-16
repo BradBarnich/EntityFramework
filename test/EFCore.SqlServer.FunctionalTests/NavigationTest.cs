@@ -4,7 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

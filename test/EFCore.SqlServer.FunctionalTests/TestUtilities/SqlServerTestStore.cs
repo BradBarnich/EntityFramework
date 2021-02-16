@@ -10,7 +10,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 #pragma warning disable IDE0022 // Use block body for methods

@@ -3,7 +3,11 @@
 
 using System;
 using System.IO;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities

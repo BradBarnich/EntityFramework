@@ -10,7 +10,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.ValueConversion.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -164,8 +168,8 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal
                 parameter.Value = SqlBytes.Null;
             }
 
-            _sqlDbTypeSetter(parameter, SqlDbType.Udt);
-            _udtTypeNameSetter(parameter, _isGeography ? "geography" : "geometry");
+            // _sqlDbTypeSetter(parameter, SqlDbType.Udt);
+            // _udtTypeNameSetter(parameter, _isGeography ? "geography" : "geometry");
         }
 
         private static SqlServerBytesReader CreateReader(NtsGeometryServices services, bool isGeography)

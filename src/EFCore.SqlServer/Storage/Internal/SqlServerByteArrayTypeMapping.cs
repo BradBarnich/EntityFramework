@@ -7,7 +7,11 @@ using System.Data.Common;
 using System.Globalization;
 using System.Text;
 using JetBrains.Annotations;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 

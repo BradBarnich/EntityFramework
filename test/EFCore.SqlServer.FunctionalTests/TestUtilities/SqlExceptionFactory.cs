@@ -4,7 +4,11 @@
 using System;
 using System.Linq;
 using System.Reflection;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities
 {

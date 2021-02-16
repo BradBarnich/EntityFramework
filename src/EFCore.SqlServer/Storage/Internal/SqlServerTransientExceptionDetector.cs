@@ -3,7 +3,11 @@
 
 using System;
 using JetBrains.Annotations;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal
 {

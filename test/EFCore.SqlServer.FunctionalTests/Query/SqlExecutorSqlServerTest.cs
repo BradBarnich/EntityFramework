@@ -3,7 +3,11 @@
 
 using System.Data.Common;
 using System.Threading.Tasks;
+#if !NETFRAMEWORK
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit.Abstractions;
 
