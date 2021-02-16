@@ -7,8 +7,7 @@ using Microsoft.EntityFrameworkCore.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class ConferencePlannerSqlServerTest : ConferencePlannerTestBase<ConferencePlannerSqlServerTest.ConferencePlannerSqlServerFixture
-    >
+    public class ConferencePlannerSqlServerTest : ConferencePlannerTestBase<ConferencePlannerSqlServerTest.ConferencePlannerSqlServerFixture>
     {
         public ConferencePlannerSqlServerTest(ConferencePlannerSqlServerFixture fixture)
             : base(fixture)

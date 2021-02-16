@@ -71,12 +71,22 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
             if (memberExpression.Member is FieldInfo fieldInfo
                 && fieldInfo.IsInitOnly)
             {
+#if !NETFRAMEWORK
                 return (BinaryExpression)Activator.CreateInstance(
                     _assignBinaryExpressionType,
                     BindingFlags.NonPublic | BindingFlags.Instance,
                     null,
                     new object[] { memberExpression, valueExpression },
                     null);
+#else
+                 return Expression.Call(
+                    Expression.Constant(fieldInfo),
+                    _fieldInfoSetValueMethod,
+                    memberExpression.Expression,
+                    Expression.Convert(
+                        valueExpression,
+                        typeof(object)));
+#endif
             }
 
             return Expression.Assign(memberExpression, valueExpression);
@@ -84,6 +94,14 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
 
         private static readonly Type _assignBinaryExpressionType
             = typeof(Expression).Assembly.GetType("System.Linq.Expressions.AssignBinaryExpression");
+
+#if NETFRAMEWORK
+        private static readonly MethodInfo _fieldInfoSetValueMethod
+            = typeof(FieldInfo)
+                .GetTypeInfo()
+                .GetDeclaredMethods(nameof(FieldInfo.SetValue))
+                .Single(m => m.GetParameters().Length == 2);
+#endif
 
         /// <summary>
         ///     If the given a method-call expression represents a call to <see cref="EF.Property{TProperty}" />, then this

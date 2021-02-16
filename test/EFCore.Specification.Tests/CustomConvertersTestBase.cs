@@ -121,7 +121,8 @@ namespace Microsoft.EntityFrameworkCore
                 var principal = context.Add(
                         new NullablePrincipal
                         {
-                            Id = 1, Dependents = new List<NonNullableDependent> { new NonNullableDependent { Id = 1 } }
+                            Id = 1,
+                            Dependents = new List<NonNullableDependent> { new NonNullableDependent { Id = 1 } }
                         })
                     .Entity;
 
@@ -1168,7 +1169,7 @@ namespace Microsoft.EntityFrameworkCore
                     {
                         b.Property(e => e.Tags).HasConversion(
                             c => string.Join(",", c),
-                            s => s.Split(',', StringSplitOptions.None).ToList(),
+                            s => s.Split(new[] { ',' }, StringSplitOptions.None).ToList(),
                             new ValueComparer<List<string>>(favorStructuralComparisons: true));
 
                         b.HasData(
@@ -1232,10 +1233,10 @@ namespace Microsoft.EntityFrameworkCore
                 public static IDictionary<string, string> Deserialize(string s)
                 {
                     var dictionary = new Dictionary<string, string>();
-                    var keyValuePairs = s.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                    var keyValuePairs = s.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var keyValuePair in keyValuePairs)
                     {
-                        var parts = keyValuePair[1..^1].Split(",");
+                        var parts = keyValuePair.Substring(1, keyValuePair.Length - 2).Split(',');
                         dictionary[parts[0]] = parts[1];
                     }
 

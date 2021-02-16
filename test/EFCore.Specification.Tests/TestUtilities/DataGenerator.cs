@@ -26,7 +26,11 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
         public static object[][] GetCombinations(object[] set, int length)
         {
             var sets = new object[length][];
-            Array.Fill(sets, set);
+            for (var i = 0; i < sets.Length; i++)
+            {
+                sets[i] = set;
+            }
+
             return GetCombinations(sets);
         }
 

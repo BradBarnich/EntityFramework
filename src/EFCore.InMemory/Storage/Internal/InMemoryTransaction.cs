@@ -30,7 +30,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public bool SupportsSavepoints => false;
+        public virtual bool SupportsSavepoints => false;
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -95,7 +95,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public void CreateSavepoint(string name)
+        public virtual void CreateSavepoint(string name)
         {
         }
 
@@ -105,7 +105,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public Task CreateSavepointAsync(string name, CancellationToken cancellationToken = default)
+        public virtual Task CreateSavepointAsync(string name, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public void RollbackToSavepoint(string name)
+        public virtual void RollbackToSavepoint(string name)
         {
         }
 
@@ -124,7 +124,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public Task RollbackToSavepointAsync(string name, CancellationToken cancellationToken = default)
+        public virtual Task RollbackToSavepointAsync(string name, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public void ReleaseSavepoint(string name)
+        public virtual void ReleaseSavepoint(string name)
         {
         }
 
@@ -143,7 +143,7 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Storage.Internal
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        public Task ReleaseSavepointAsync(string name, CancellationToken cancellationToken = default)
+        public virtual Task ReleaseSavepointAsync(string name, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
     }
 }

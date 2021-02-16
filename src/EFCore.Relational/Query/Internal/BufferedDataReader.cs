@@ -224,7 +224,11 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
             }
             finally
             {
+#if NETFRAMEWORK
+                _underlyingReader.Dispose();
+#else
                 await _underlyingReader.DisposeAsync().ConfigureAwait(false);
+#endif
                 _underlyingReader = null;
             }
         }

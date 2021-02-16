@@ -77,8 +77,8 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
                 var indexMethodEnding = methodCallLine.IndexOf(')') + 1;
                 var testName = methodCallLine.Substring(0, indexMethodEnding);
-                var parts = methodCallLine[indexMethodEnding..].Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                var fileName = parts[1][..^5];
+                var parts = methodCallLine.Substring(indexMethodEnding, methodCallLine.Length - indexMethodEnding).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var fileName = parts[1].Substring(0, parts[1].Length - 5);
                 var lineNumber = int.Parse(parts[2]);
 
                 var currentDirectory = Directory.GetCurrentDirectory();

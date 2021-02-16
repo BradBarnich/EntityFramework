@@ -169,9 +169,33 @@ namespace Microsoft.EntityFrameworkCore.Storage
 
                     if (!interceptionResult.IsSuppressed)
                     {
+#if NETFRAMEWORK
+                        if (_reader is IAsyncDisposable disposableReader)
+                        {
+                            await disposableReader.DisposeAsync().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _reader.Dispose();
+                        }
+#else
                         await _reader.DisposeAsync().ConfigureAwait(false);
+                        
+#endif
                         _command.Parameters.Clear();
+#if NETFRAMEWORK
+                        if (_command is IAsyncDisposable disposableCommand)
+                        {
+                            await disposableCommand.DisposeAsync().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _command.Dispose();
+                        }
+#else
                         await _command.DisposeAsync().ConfigureAwait(false);
+                        
+#endif                    
                         await _connection.CloseAsync().ConfigureAwait(false);
                     }
                 }

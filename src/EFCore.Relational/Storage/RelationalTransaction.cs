@@ -181,7 +181,11 @@ namespace Microsoft.EntityFrameworkCore.Storage
 
                 if (!interceptionResult.IsSuppressed)
                 {
+#if NETFRAMEWORK
+                    _dbTransaction.Commit();
+#else
                     await _dbTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+#endif
                 }
 
                 await Logger.TransactionCommittedAsync(
@@ -230,7 +234,11 @@ namespace Microsoft.EntityFrameworkCore.Storage
 
                 if (!interceptionResult.IsSuppressed)
                 {
+#if NETFRAMEWORK
+                    _dbTransaction.Rollback();
+#else
                     await _dbTransaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+#endif
                 }
 
                 await Logger.TransactionRolledBackAsync(
@@ -596,7 +604,18 @@ namespace Microsoft.EntityFrameworkCore.Storage
 
                 if (_transactionOwned)
                 {
-                    await _dbTransaction.DisposeAsync().ConfigureAwait(false);
+#if NETFRAMEWORK
+                    if (_dbTransaction is IAsyncDisposable disposables)
+                    {
+                        await disposables.DisposeAsync().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        _dbTransaction.Dispose();
+                    }
+#else
+                    await _dbTransaction.DisposeAsync().ConfigureAwait(false);   
+#endif
 
                     Logger.TransactionDisposed(
                         Connection,

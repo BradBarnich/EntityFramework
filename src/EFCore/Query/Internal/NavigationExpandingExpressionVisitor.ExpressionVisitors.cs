@@ -591,6 +591,8 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
             {
                 Check.NotNull(newExpression, nameof(newExpression));
 
+                if (newExpression.Arguments.Count == 0) return newExpression;
+
                 var arguments = new Expression[newExpression.Arguments.Count];
                 for (var i = 0; i < newExpression.Arguments.Count; i++)
                 {

@@ -93,7 +93,7 @@ namespace Microsoft.EntityFrameworkCore.Proxies.Internal
 
         private void HandleChanged(IInvocation invocation, IPropertyBase property, IEqualityComparer comparer)
         {
-            var newValue = invocation.Arguments[^1];
+            var newValue = invocation.Arguments[invocation.Arguments.Length - 1];
 
             if (_checkEquality)
             {

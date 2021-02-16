@@ -534,7 +534,7 @@ namespace Microsoft.EntityFrameworkCore
                     context.Entry(optionalChildAk).State = EntityState.Detached;
                     context.Entry(requieredChildAk).State = EntityState.Detached;
 
-                    foreach (var overlappingEntry in context.ChangeTracker.Entries<OptionalOverlapping2>())
+                    foreach (var overlappingEntry in context.ChangeTracker.Entries<OptionalOverlapping2>().ToArray())
                     {
                         overlappingEntry.State = EntityState.Detached;
                     }

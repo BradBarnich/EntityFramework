@@ -343,9 +343,15 @@ namespace Microsoft.EntityFrameworkCore.Storage
                     cancellationToken)
                 .ConfigureAwait(false);
 
+#if NETFRAMEWORK
+            var dbTransaction = interceptionResult.HasResult
+                ? interceptionResult.Result
+                : DbConnection.BeginTransaction(isolationLevel);
+#else
             var dbTransaction = interceptionResult.HasResult
                 ? interceptionResult.Result
                 : await DbConnection.BeginTransactionAsync(isolationLevel, cancellationToken).ConfigureAwait(false);
+#endif
 
             dbTransaction = await Dependencies.TransactionLogger.TransactionStartedAsync(
                     this,
@@ -579,7 +585,11 @@ namespace Microsoft.EntityFrameworkCore.Storage
         {
             if (DbConnection.State == ConnectionState.Broken)
             {
-                await DbConnection.CloseAsync().ConfigureAwait(false);
+#if NETFRAMEWORK
+                DbConnection.Close();
+#else
+                 await DbConnection.CloseAsync().ConfigureAwait(false);
+#endif
             }
 
             var wasOpened = false;
@@ -839,7 +849,11 @@ namespace Microsoft.EntityFrameworkCore.Storage
                     {
                         if (!interceptionResult.IsSuppressed)
                         {
+#if NETFRAMEWORK
+                            DbConnection.Close();
+#else
                             await DbConnection.CloseAsync().ConfigureAwait(false);
+#endif
                         }
 
                         wasClosed = true;
@@ -926,7 +940,18 @@ namespace Microsoft.EntityFrameworkCore.Storage
             if (_connectionOwned
                 && _connection != null)
             {
+#if NETFRAMEWORK
+                if (DbConnection is IAsyncDisposable disposable)
+                {
+                    await disposable.DisposeAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    DbConnection.Dispose();
+                }
+#else
                 await DbConnection.DisposeAsync().ConfigureAwait(false);
+#endif
                 _connection = null;
                 _openedCount = 0;
             }

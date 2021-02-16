@@ -96,7 +96,7 @@ namespace Microsoft.EntityFrameworkCore.Proxies.Internal
             if (_checkEquality)
             {
                 var oldValue = property.GetGetter().GetClrValue(invocation.Proxy);
-                var newValue = invocation.Arguments[^1];
+                var newValue = invocation.Arguments[invocation.Arguments.Length - 1];
 
                 if (!(comparer?.Equals(oldValue, newValue) ?? Equals(oldValue, newValue)))
                 {

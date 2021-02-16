@@ -12,8 +12,7 @@ namespace Microsoft.EntityFrameworkCore.Query
     {
         Func<DbContext> GetContextCreator();
 
-        Func<DbContext, ISetSource> GetSetSourceCreator()
-            => context => new DefaultSetSource(context);
+        Func<DbContext, ISetSource> GetSetSourceCreator();
 
         ISetSource GetExpectedData();
 
@@ -21,7 +20,7 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         IReadOnlyDictionary<Type, object> GetEntityAsserters();
 
-        private class DefaultSetSource : ISetSource
+        public class DefaultSetSource : ISetSource
         {
             private readonly DbContext _context;
 

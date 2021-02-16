@@ -546,6 +546,9 @@ namespace Microsoft.EntityFrameworkCore.Query
             public Func<DbContext> GetContextCreator()
                 => () => CreateContext();
 
+            public Func<DbContext, ISetSource> GetSetSourceCreator()
+                => context => new IQueryFixtureBase.DefaultSetSource(context);
+
             public ISetSource GetExpectedData()
                 => new FunkyDataData();
 

@@ -239,7 +239,7 @@ WHERE name = '{connection.Database}';";
                     var schemaFilterBuilder = new StringBuilder();
                     schemaFilterBuilder.Append(s);
                     schemaFilterBuilder.Append(" IN (");
-                    schemaFilterBuilder.AppendJoin(", ", schemas.Select(EscapeLiteral));
+                    schemaFilterBuilder.AppendJoin(schemas.Select(EscapeLiteral), ", ");
                     schemaFilterBuilder.Append(")");
                     return schemaFilterBuilder.ToString();
                 })
@@ -298,7 +298,7 @@ WHERE name = '{connection.Database}';";
                             {
                                 tableFilterBuilder.Append(t);
                                 tableFilterBuilder.Append(" IN (");
-                                tableFilterBuilder.AppendJoin(", ", tablesWithoutSchema.Select(e => EscapeLiteral(e.Table)));
+                                tableFilterBuilder.AppendJoin(tablesWithoutSchema.Select(e => EscapeLiteral(e.Table)), ", ");
                                 tableFilterBuilder.Append(")");
                             }
 
@@ -312,13 +312,13 @@ WHERE name = '{connection.Database}';";
 
                                 tableFilterBuilder.Append(t);
                                 tableFilterBuilder.Append(" IN (");
-                                tableFilterBuilder.AppendJoin(", ", tablesWithSchema.Select(e => EscapeLiteral(e.Table)));
+                                tableFilterBuilder.AppendJoin(tablesWithSchema.Select(e => EscapeLiteral(e.Table)), ", ");
                                 tableFilterBuilder.Append(") AND (");
                                 tableFilterBuilder.Append(s);
                                 tableFilterBuilder.Append(" + N'.' + ");
                                 tableFilterBuilder.Append(t);
                                 tableFilterBuilder.Append(") IN (");
-                                tableFilterBuilder.AppendJoin(", ", tablesWithSchema.Select(e => EscapeLiteral($"{e.Schema}.{e.Table}")));
+                                tableFilterBuilder.AppendJoin(tablesWithSchema.Select(e => EscapeLiteral($"{e.Schema}.{e.Table}")), ", ");
                                 tableFilterBuilder.Append(")");
                             }
                         }
@@ -408,9 +408,9 @@ WHERE "
             while (reader.Read())
             {
                 var schema = reader.GetValueOrDefault<string>("schema_name");
-                var name = reader.GetString("name");
+                var name = reader.GetFieldValue<string>("name");
                 var storeTypeSchema = reader.GetValueOrDefault<string>("type_schema");
-                var storeType = reader.GetString("type_name");
+                var storeType = reader.GetFieldValue<string>("type_name");
                 var precision = reader.GetValueOrDefault<int>("precision");
                 var scale = reader.GetValueOrDefault<int>("scale");
                 var cyclic = reader.GetValueOrDefault<bool>("is_cycling");
@@ -556,9 +556,9 @@ WHERE "
                 while (reader.Read())
                 {
                     var schema = reader.GetValueOrDefault<string>("schema");
-                    var name = reader.GetString("name");
+                    var name = reader.GetFieldValue<string>("name");
                     var comment = reader.GetValueOrDefault<string>("comment");
-                    var type = reader.GetString("type");
+                    var type = reader.GetFieldValue<string>("type");
 
                     _logger.TableFound(DisplayName(schema, name));
 

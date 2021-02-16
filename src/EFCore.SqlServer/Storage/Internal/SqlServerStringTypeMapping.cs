@@ -198,8 +198,12 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal
                             builder.Append('\'');
                             openApostrophe = true;
                         }
-
+#if NETFRAMEWORK
+                        builder.Append(stringValue.Substring(start, length));
+#else
                         builder.Append(stringValue.AsSpan().Slice(start, length));
+#endif
+
                     }
 
                     if (lineFeed || carriageReturn)
@@ -257,7 +261,11 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal
                     openApostrophe = true;
                 }
 
+#if NETFRAMEWORK
+                builder.Append(stringValue.Substring(start, length));
+#else
                 builder.Append(stringValue.AsSpan().Slice(start, length));
+#endif
             }
 
             if (openApostrophe)

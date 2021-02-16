@@ -641,7 +641,7 @@ namespace Microsoft.EntityFrameworkCore.Design
             IDictionary<string, IAnnotation> annotations,
             Func<TAnnotatable, IAnnotation, TCodeFragment> generateCodeFragment)
         {
-            foreach (var (name, annotation) in EnumerateForRemoval(annotations))
+            foreach (var (name, annotation) in EnumerateForRemoval(annotations).Select(pair => (pair.Key, pair.Value)))
             {
                 var codeFragment = generateCodeFragment(annotatable, annotation);
                 if (codeFragment != null)
@@ -657,7 +657,7 @@ namespace Microsoft.EntityFrameworkCore.Design
             IDictionary<string, IAnnotation> annotations,
             Func<TAnnotatable, IAnnotation, bool> isHandledByConvention)
         {
-            foreach (var (name, annotation) in EnumerateForRemoval(annotations))
+            foreach (var (name, annotation) in EnumerateForRemoval(annotations).Select(pair => (pair.Key, pair.Value)))
             {
                 if (isHandledByConvention(annotatable, annotation))
                 {

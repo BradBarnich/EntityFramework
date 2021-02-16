@@ -43,8 +43,7 @@ namespace Microsoft.EntityFrameworkCore.Design
         /// <param name="properties"> The properties. </param>
         /// <param name="lambdaIdentifier"> The identifier to use for parameter in the lambda. </param>
         /// <returns> The lambda. </returns>
-        string Lambda([NotNull] IEnumerable<IProperty> properties, [CanBeNull] string lambdaIdentifier = null)
-            => Lambda(properties.Select(p => p.Name).ToList(), lambdaIdentifier);
+        string Lambda([NotNull] IEnumerable<IProperty> properties, [CanBeNull] string lambdaIdentifier = null);
 
         /// <summary>
         ///     Generates a multidimensional array literal.

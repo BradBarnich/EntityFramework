@@ -1232,7 +1232,7 @@ namespace Microsoft.EntityFrameworkCore.Query
 
                     var newParameterName =
                         $"{RuntimeParameterPrefix}"
-                        + $"{sqlParameterExpression.Name[QueryCompilationContext.QueryParameterPrefix.Length..]}_{property.Name}";
+                        + $"{sqlParameterExpression.Name.Substring(QueryCompilationContext.QueryParameterPrefix.Length, sqlParameterExpression.Name.Length - QueryCompilationContext.QueryParameterPrefix.Length)}_{property.Name}";
 
                     rewrittenSource = _queryCompilationContext.RegisterRuntimeParameter(newParameterName, lambda);
                     break;

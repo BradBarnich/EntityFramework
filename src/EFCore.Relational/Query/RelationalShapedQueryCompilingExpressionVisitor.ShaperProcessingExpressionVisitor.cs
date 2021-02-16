@@ -999,7 +999,9 @@ namespace Microsoft.EntityFrameworkCore.Query
                         getMethod,
                         indexExpression);
 
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
                 var buffering = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
                 if (AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue23282", out var isEnabled) && isEnabled)
                 {
@@ -1104,6 +1106,7 @@ namespace Microsoft.EntityFrameworkCore.Query
                         valueExpression);
                 }
 
+#if !NETFRAMEWORK
                 if (_detailedErrorsEnabled
                     && !buffering)
                 {
@@ -1120,6 +1123,7 @@ namespace Microsoft.EntityFrameworkCore.Query
 
                     valueExpression = Expression.TryCatch(valueExpression, catchBlock);
                 }
+#endif
 
                 return valueExpression;
             }

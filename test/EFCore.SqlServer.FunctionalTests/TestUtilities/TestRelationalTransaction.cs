@@ -68,14 +68,27 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
                 {
                     if (fail.Value)
                     {
+#if NETFRAMEWORK
+                        this.GetDbTransaction().Rollback();
+#else
                         await this.GetDbTransaction().RollbackAsync(cancellationToken);
+#endif
                     }
                     else
                     {
+#if NETFRAMEWORK
+                        this.GetDbTransaction().Commit();
+#else
                         await this.GetDbTransaction().CommitAsync(cancellationToken);
-                    }
+#endif
 
+                    }
+                    
+#if NETFRAMEWORK
+                    _testConnection.DbConnection.Close();
+#else
                     await _testConnection.DbConnection.CloseAsync();
+#endif
                     throw SqlExceptionFactory.CreateSqlException(_testConnection.ErrorNumber, _testConnection.ConnectionId);
                 }
             }

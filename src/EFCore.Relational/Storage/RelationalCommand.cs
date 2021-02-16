@@ -143,7 +143,18 @@ namespace Microsoft.EntityFrameworkCore.Storage
             IRelationalConnection connection)
         {
             command.Parameters.Clear();
+#if NETFRAMEWORK
+            if (command is IAsyncDisposable disposable)
+            {
+                await disposable.DisposeAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                command.Dispose();
+            }
+#else
             await command.DisposeAsync().ConfigureAwait(false);
+#endif
             await connection.CloseAsync().ConfigureAwait(false);
         }
 

@@ -204,7 +204,7 @@ namespace Microsoft.EntityFrameworkCore.Migrations.Design
                 // ReSharper disable once InlineOutVariableDeclaration
                 var counter = 1;
                 if (builderName.Length > 1
-                    && int.TryParse(builderName[1..], out counter))
+                    && int.TryParse(builderName.Substring(1, builderName.Length - 1), out counter))
                 {
                     counter++;
                 }
@@ -1606,7 +1606,7 @@ namespace Microsoft.EntityFrameworkCore.Migrations.Design
         {
             List<IAnnotation> ambiguousAnnotations = null;
 
-            foreach (var (name, annotation) in annotations)
+            foreach (var (name, annotation) in annotations.Select(k => (k.Key, k.Value)))
             {
                 if (annotationNameMatcher(name))
                 {

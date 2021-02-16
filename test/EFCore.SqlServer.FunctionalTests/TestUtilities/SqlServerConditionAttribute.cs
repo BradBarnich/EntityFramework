@@ -46,7 +46,7 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             if (Conditions.HasFlag(SqlServerCondition.SupportsAttach))
             {
                 var defaultConnection = new SqlConnectionStringBuilder(TestEnvironment.DefaultConnection);
-                isMet &= defaultConnection.DataSource.Contains("(localdb)", StringComparison.OrdinalIgnoreCase)
+                isMet &= defaultConnection.DataSource.ToLower().Contains("(localdb)")
                     || defaultConnection.UserInstance;
             }
 
