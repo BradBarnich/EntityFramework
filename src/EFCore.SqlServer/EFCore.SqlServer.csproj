@@ -8,6 +8,7 @@
     <RootNamespace>Microsoft.EntityFrameworkCore.SqlServer</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>$(PackageTags);SQL Server</PackageTags>
+    <PackageId>CareEvolution.EntityFrameworkCore.SqlServer</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
