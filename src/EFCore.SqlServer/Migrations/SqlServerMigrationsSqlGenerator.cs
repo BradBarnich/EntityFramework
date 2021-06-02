@@ -38,6 +38,9 @@ namespace Microsoft.EntityFrameworkCore.Migrations
         private IReadOnlyList<MigrationOperation> _operations;
         private int _variableCounter;
 
+        private static readonly bool _useOldAlterColumnDefaultValueLogic =
+            AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue24272", out var enabled) && enabled;
+
         /// <summary>
         ///     Creates a new <see cref="SqlServerMigrationsSqlGenerator" /> instance.
         /// </summary>
@@ -339,11 +342,14 @@ namespace Microsoft.EntityFrameworkCore.Migrations
                 || operation.Collation != operation.OldColumn.Collation
                 || HasDifferences(operation.GetAnnotations(), operation.OldColumn.GetAnnotations());
 
+            var (oldDefaultValue, oldDefaultValueSql) = (operation.OldColumn.DefaultValue, operation.OldColumn.DefaultValueSql);
+
             if (alterStatementNeeded
-                || !Equals(operation.DefaultValue, operation.OldColumn.DefaultValue)
-                || operation.DefaultValueSql != operation.OldColumn.DefaultValueSql)
+                || !Equals(operation.DefaultValue, oldDefaultValue)
+                || operation.DefaultValueSql != oldDefaultValueSql)
             {
                 DropDefaultConstraint(operation.Schema, operation.Table, operation.Name, builder);
+                (oldDefaultValue, oldDefaultValueSql) = (null, null);
             }
 
             if (alterStatementNeeded)
@@ -388,8 +394,11 @@ namespace Microsoft.EntityFrameworkCore.Migrations
                 builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
             }
 
-            if (operation.DefaultValue != null
-                || operation.DefaultValueSql != null)
+            var addDefaultValue = _useOldAlterColumnDefaultValueLogic
+                ? operation.DefaultValue != null || operation.DefaultValueSql != null
+                : !Equals(operation.DefaultValue, oldDefaultValue) || operation.DefaultValueSql != oldDefaultValueSql;
+
+            if (addDefaultValue)
             {
                 builder
                     .Append("ALTER TABLE ")
@@ -1868,6 +1877,7 @@ namespace Microsoft.EntityFrameworkCore.Migrations
             bool omitVariableDeclarations = false)
         {
             var stringTypeMapping = Dependencies.TypeMappingSource.GetMapping(typeof(string));
+            var useOldBehavior = AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue24112", out var enabled) && enabled;
 
             string schemaLiteral;
             if (schema == null)
@@ -1914,7 +1924,127 @@ namespace Microsoft.EntityFrameworkCore.Migrations
             builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
 
             string Literal(string s)
-                => stringTypeMapping.GenerateSqlLiteral(s);
+                => useOldBehavior
+                ? stringTypeMapping.GenerateSqlLiteral(s)
+                : SqlLiteral(s);
+
+            static string SqlLiteral(string value)
+            {
+                var builder = new StringBuilder();
+
+                var start = 0;
+                int i;
+                int length;
+                var openApostrophe = false;
+                var lastConcatStartPoint = 0;
+                var concatCount = 1;
+                var concatStartList = new List<int>();
+                for (i = 0; i < value.Length; i++)
+                {
+                    var lineFeed = value[i] == '\n';
+                    var carriageReturn = value[i] == '\r';
+                    var apostrophe = value[i] == '\'';
+                    if (lineFeed || carriageReturn || apostrophe)
+                    {
+                        length = i - start;
+                        if (length != 0)
+                        {
+                            if (!openApostrophe)
+                            {
+                                AddConcatOperatorIfNeeded();
+                                builder.Append("N\'");
+                                openApostrophe = true;
+                            }
+#if NETFRAMEWORK
+                            builder.Append(value.Substring(start, length));
+#else
+                            builder.Append(value.AsSpan().Slice(start, length));
+#endif
+                        }
+
+                        if (lineFeed || carriageReturn)
+                        {
+                            if (openApostrophe)
+                            {
+                                builder.Append('\'');
+                                openApostrophe = false;
+                            }
+
+                            AddConcatOperatorIfNeeded();
+                            builder
+                                .Append("NCHAR(")
+                                .Append(lineFeed ? "10" : "13")
+                                .Append(')');
+                        }
+                        else if (apostrophe)
+                        {
+                            if (!openApostrophe)
+                            {
+                                AddConcatOperatorIfNeeded();
+                                builder.Append("N'");
+                                openApostrophe = true;
+                            }
+                            builder.Append("''");
+                        }
+                        start = i + 1;
+                    }
+                }
+                length = i - start;
+                if (length != 0)
+                {
+                    if (!openApostrophe)
+                    {
+                        AddConcatOperatorIfNeeded();
+                        builder.Append("N\'");
+                        openApostrophe = true;
+                    }
+#if NETFRAMEWORK
+                    builder.Append(value.Substring(start, length));
+#else
+                    builder.Append(value.AsSpan().Slice(start, length));
+#endif
+                }
+
+                if (openApostrophe)
+                {
+                    builder.Append('\'');
+                }
+
+                for (var j = concatStartList.Count - 1; j >= 0; j--)
+                {
+                    builder.Insert(concatStartList[j], "CONCAT(");
+                    builder.Append(')');
+                }
+
+                if (builder.Length == 0)
+                {
+                    builder.Append("N''");
+                }
+
+                var result = builder.ToString();
+
+                return result;
+
+                void AddConcatOperatorIfNeeded()
+                {
+                    if (builder.Length != 0)
+                    {
+                        builder.Append(", ");
+                        concatCount++;
+
+                        if (concatCount == 2)
+                        {
+                            concatStartList.Add(lastConcatStartPoint);
+                        }
+
+                        if (concatCount == 254)
+                        {
+                            lastConcatStartPoint = builder.Length;
+                            concatCount = 1;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
