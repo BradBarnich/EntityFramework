@@ -120,8 +120,8 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
 
             convertedProperty.SetValueConverter(
                 new ValueConverter<string[], string>(
-                    v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.None)));
+                    v => string.Join(",", v),
+                    v => v.Split(new[] { ',' }, StringSplitOptions.None)));
 
             return convertedProperty;
         }

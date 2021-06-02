@@ -123,28 +123,44 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions
             public string NonNullable { get; } = "";
             public string? Nullable { get; set; }
 
+#if !NETFRAMEWORK
             [MaybeNull]
+#endif
             public string NonNullablePropertyMaybeNull { get; } = "";
 
+#if !NETFRAMEWORK
             [AllowNull]
+#endif
             public string NonNullablePropertyAllowNull { get; } = "";
 
+#if !NETFRAMEWORK
             [NotNull]
+#endif
             public string? NullablePropertyNotNull { get; } = "";
 
+#if !NETFRAMEWORK
             [DisallowNull]
+#endif
             public string? NullablePropertyDisallowNull { get; } = "";
 
+#if !NETFRAMEWORK
             [MaybeNull]
+#endif
             public string NonNullableFieldMaybeNull = "";
 
+#if !NETFRAMEWORK
             [AllowNull]
+#endif
             public string NonNullableFieldAllowNull = "";
 
+#if !NETFRAMEWORK
             [NotNull]
+#endif
             public string? NullableFieldNotNull = "";
 
+#if !NETFRAMEWORK
             [DisallowNull]
+#endif
             public string? NullableFieldDisallowNull = "";
 
             [Required]

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(StandardTestTfms)</TargetFrameworks>
+    <TargetFrameworks>$(StandardTestTfms);net48</TargetFrameworks>
     <AssemblyName>Microsoft.EntityFrameworkCore.Relational.Tests</AssemblyName>
     <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
   </PropertyGroup>
@@ -28,6 +28,10 @@
 
   <ItemGroup>
     <Folder Include="Query" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Transactions" />
   </ItemGroup>
 
 </Project>

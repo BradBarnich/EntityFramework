@@ -75,7 +75,7 @@ namespace Microsoft.EntityFrameworkCore
                     {
                         var hidingMethod = type.GetMethod(
                             method.Name,
-                            method.GetGenericArguments().Length,
+                            //method.GetGenericArguments().Length,
                             PublicInstance | BindingFlags.DeclaredOnly,
                             null,
                             method.GetParameters().Select(p => p.ParameterType).ToArray(),
@@ -321,7 +321,7 @@ namespace Microsoft.EntityFrameworkCore
                 var name = mutableMethod.Name;
                 if (mutableMethod.Name.StartsWith("set_", StringComparison.Ordinal))
                 {
-                    name = "Set" + name[4..];
+                    name = "Set" + name.Substring(4, name.Length - 4);
                 }
 
                 return name;
@@ -410,7 +410,7 @@ namespace Microsoft.EntityFrameworkCore
                 if (!Fixture.UnmatchedMetadataMethods.Contains(methodTuple.Value)
                     && methodTuple.Key.StartsWith("Set", StringComparison.Ordinal))
                 {
-                    var expectedName = "Get" + methodTuple.Key[3..] + "ConfigurationSource";
+                    var expectedName = "Get" + methodTuple.Key.Substring(3, methodTuple.Key.Length - 3) + "ConfigurationSource";
                     if (!methodLookup.TryGetValue(expectedName, out var getAspectConfigurationSource))
                     {
                         return $"{type.Name} expected to have a {expectedName}() method";
@@ -465,13 +465,13 @@ namespace Microsoft.EntityFrameworkCore
                 }
 
                 var expectedName = method.Name.StartsWith("HasNo", StringComparison.Ordinal)
-                    ? "CanRemove" + method.Name[5..]
+                    ? "CanRemove" + method.Name.Substring(5, method.Name.Length - 5)
                     : "CanSet"
                     + (method.Name.StartsWith("Has", StringComparison.Ordinal)
                         || method.Name.StartsWith("Use", StringComparison.Ordinal)
-                            ? method.Name[3..]
+                            ? method.Name.Substring(3, method.Name.Length - 3)
                             : method.Name.StartsWith("To", StringComparison.Ordinal)
-                                ? method.Name[2..]
+                                ? method.Name.Substring(2, method.Name.Length - 2)
                                 : method.Name);
                 if (!methodLookup.TryGetValue(expectedName, out var canSetMethod))
                 {
@@ -510,7 +510,7 @@ namespace Microsoft.EntityFrameworkCore
             var name = method.Name;
             if (name.StartsWith("get_", StringComparison.Ordinal))
             {
-                name = name[4..];
+                name = name.Substring(4, name.Length - 4);
                 if (name.StartsWith("Get", StringComparison.Ordinal)
                     && !Fixture.MetadataMethodExceptions.Contains(method))
                 {
@@ -627,7 +627,7 @@ namespace Microsoft.EntityFrameworkCore
                 && name != "IsOwned"
                 && name != "IsIgnored")
             {
-                var lastParameter = conventionMethod.GetParameters()[^1];
+                var lastParameter = parameters[parameters.Length - 1];
                 if (lastParameter.Name != "fromDataAnnotation"
                     || !Equals(lastParameter.DefaultValue, false))
                 {
@@ -961,7 +961,7 @@ namespace Microsoft.EntityFrameworkCore
 
             var parameters = (
                     from type in GetAllTypes(TargetAssembly.GetExportedTypes())
-                    where !type.Namespace.Contains("Internal", StringComparison.Ordinal)
+                    where type.Namespace.IndexOf("Internal", StringComparison.Ordinal) == -1
                     from method in type.GetTypeInfo().DeclaredMethods
                     where !method.IsPrivate
                     from parameter in method.GetParameters()

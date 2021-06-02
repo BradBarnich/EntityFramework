@@ -1102,7 +1102,7 @@ namespace Microsoft.EntityFrameworkCore
             Assert.Same(typeof(string), mapping.ClrType);
             Assert.Equal(2018, mapping.Size);
             Assert.Equal(typeName.StartsWith("n", StringComparison.OrdinalIgnoreCase), mapping.IsUnicode);
-            Assert.Equal(typeName.Contains("var", StringComparison.OrdinalIgnoreCase), !mapping.IsFixedLength);
+            Assert.Equal(typeName.IndexOf("var", StringComparison.OrdinalIgnoreCase) != -1, !mapping.IsFixedLength);
             Assert.Equal(typeName + "(2018)", mapping.StoreType);
         }
 
@@ -1124,7 +1124,7 @@ namespace Microsoft.EntityFrameworkCore
 
             Assert.Same(typeof(byte[]), mapping.ClrType);
             Assert.Equal(2018, mapping.Size);
-            Assert.Equal(typeName.Contains("var", StringComparison.OrdinalIgnoreCase), !mapping.IsFixedLength);
+            Assert.Equal(typeName.IndexOf("var", StringComparison.OrdinalIgnoreCase) != -1, !mapping.IsFixedLength);
             Assert.Equal(typeName + "(2018)", mapping.StoreType);
         }
 

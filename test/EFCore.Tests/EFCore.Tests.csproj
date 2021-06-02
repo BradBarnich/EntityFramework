@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(StandardTestTfms)</TargetFrameworks>
+    <TargetFrameworks>$(StandardTestTfms);net48</TargetFrameworks>
     <AssemblyName>Microsoft.EntityFrameworkCore.Tests</AssemblyName>
     <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
   </PropertyGroup>
@@ -43,6 +43,11 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>GiantModel.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Transactions" />
   </ItemGroup>
 
 </Project>

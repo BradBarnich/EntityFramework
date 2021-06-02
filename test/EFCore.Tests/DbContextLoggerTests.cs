@@ -425,7 +425,7 @@ namespace Microsoft.EntityFrameworkCore
 
             var lines = writer.ToString()
                 .Replace(productVersion, "X.X.X-any")
-                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                .Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
             var builder = new StringBuilder();
             foreach (var line in lines)
@@ -434,7 +434,7 @@ namespace Microsoft.EntityFrameworkCore
 
                 if (!normalized.StartsWith("Init", StringComparison.Ordinal))
                 {
-                    if (normalized.Contains("20", StringComparison.Ordinal))
+                    if (normalized.IndexOf("20", StringComparison.Ordinal) >= 0)
                     {
                         // May fail if test happens to span midnight on a change in length; seems unlikely!
                         var end = (utc ? 28 : DateTime.Now.ToShortDateString().Length + 13) + dateAt;
